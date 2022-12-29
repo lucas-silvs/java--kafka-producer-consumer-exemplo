@@ -1,2 +1,13 @@
 server:
   port: 5000
+
+spring:
+  kafka:
+    nome-topico: topico-teste
+    bootstrap-servers: localhost:9092
+    producer:
+      ack: 0
+      number-of-tries: 0
+      imdepotence: false
+      timeout: 0
+
