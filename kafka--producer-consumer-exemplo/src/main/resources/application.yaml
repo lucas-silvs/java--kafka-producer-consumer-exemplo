@@ -9,5 +9,5 @@ spring:
       ack: 0
       number-of-tries: 0
       imdepotence: false
-      timeout: 0
+      timeout: 1000
 
