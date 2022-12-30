@@ -1,0 +1,23 @@
+{
+  "name": "UsuarioTesteAvro",
+  "namespace": "com.lucassilvs.kafkaproducerexemplo.gateways.kafka",
+  "type": "record",
+  "doc": "Sample schema to help you get started.",
+  "fields": [
+    {
+      "doc": "id gerado pelo service",
+      "name": "id",
+      "type": "int"
+    },
+    {
+      "doc": "Nome do usuario",
+      "name": "nome",
+      "type": "string"
+    },
+    {
+      "doc": "saldo do usuario convertido para string",
+      "name": "saldo",
+      "type": "string"
+    }
+  ]
+}

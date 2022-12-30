@@ -3,7 +3,10 @@ server:
 
 spring:
   kafka:
-    nome-topico: topico-teste
     bootstrap-servers: localhost:9092
     consumer:
       group-id: consumer-teste
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
+  main:
+    allow-bean-definition-overriding: true
