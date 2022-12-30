@@ -1,4 +1,4 @@
-package com.lucassilvs.kafkaproducerconsumerexemplo;
+package com.lucassilvs.kafkaproducerexemplo;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
