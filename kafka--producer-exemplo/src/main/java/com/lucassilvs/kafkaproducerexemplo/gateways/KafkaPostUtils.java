@@ -1,6 +1,7 @@
-package com.lucassilvs.kafkaproducerconsumerexemplo.gateways;
+package com.lucassilvs.kafkaproducerexemplo.gateways;
 
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
@@ -10,16 +11,17 @@ import java.util.logging.Logger;
 public class KafkaPostUtils {
 
     private Logger logger = Logger.getLogger(this.getClass().getName());
-    private final KafkaTemplate<String,String> kafkaTemplate;
 
-    public KafkaPostUtils(KafkaTemplate<String, String> kafkaTemplate) {
+    @Autowired
+    private final KafkaTemplate kafkaTemplate;
+
+    public KafkaPostUtils(KafkaTemplate kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;
     }
 
-    public void postarMensagem(String mensagem, String nomeTopico){
+    public void postarMensagem(Object mensagem, String nomeTopico){
         logger.info("Postando mensagem: " + mensagem + " no tópico " + nomeTopico);
         kafkaTemplate.send(nomeTopico, mensagem);
         logger.info("mensagem enviada com sucesso");
-
     }
 }

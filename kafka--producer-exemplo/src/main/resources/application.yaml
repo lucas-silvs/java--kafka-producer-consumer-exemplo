@@ -3,7 +3,6 @@ server:
 
 spring:
   kafka:
-    nome-topico: topico-teste
     bootstrap-servers: localhost:9092
     producer:
       ack: 0

@@ -1,7 +1,5 @@
-package com.lucassilvs.kafkaproducerconsumerexemplo.models.request;
+package com.lucassilvs.kafkaproducerexemplo.models.request;
 
-
-import org.springframework.lang.NonNull;
 
 public class MensagemRequest {
     private String mensagem;

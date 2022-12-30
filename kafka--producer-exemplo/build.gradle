@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.0.1'
 	id 'io.spring.dependency-management' version '1.1.0'
+	id "com.github.davidmc24.gradle.plugin.avro" version "1.5.0"
 }
 
 group = 'com.lucassilvs'
@@ -10,13 +11,23 @@ sourceCompatibility = '17'
 
 repositories {
 	mavenCentral()
+	maven {
+		url "https://packages.confluent.io/maven"
+	}
 }
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.kafka:spring-kafka'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	//Kafka
+	implementation 'org.springframework.kafka:spring-kafka'
 	testImplementation 'org.springframework.kafka:spring-kafka-test'
+
+	//AVRO - Schema Registry
+	implementation 'io.confluent:kafka-avro-serializer:7.3.1'
+
+
 }
 
 tasks.named('test') {
