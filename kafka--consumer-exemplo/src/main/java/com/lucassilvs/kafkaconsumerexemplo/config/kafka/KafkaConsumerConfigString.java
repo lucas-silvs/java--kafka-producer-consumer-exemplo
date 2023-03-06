@@ -9,11 +9,9 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.config.KafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
-import org.springframework.kafka.listener.CommonErrorHandler;
 import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
-import org.springframework.kafka.listener.DefaultErrorHandler;
-import org.springframework.util.backoff.BackOff;
-import org.springframework.util.backoff.FixedBackOff;
+
+import java.time.Duration;
 
 @Profile("string")
 @EnableKafka
@@ -29,16 +27,11 @@ public class KafkaConsumerConfigString {
     public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String,String>> kafkalisternerContainerFactory(KafkaProperties kafkaProperties){
         ConcurrentKafkaListenerContainerFactory<String,String> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory(kafkaProperties));
-        factory.setCommonErrorHandler(commonErrorHandler());
+
+        //Adicionando retry para caso de erro de autenticação com o broker (GroupAuthorizationException)
+        factory.getContainerProperties().setAuthExceptionRetryInterval(Duration.ofSeconds(7));
 
         return factory;
     }
-
-    @Bean
-    public CommonErrorHandler commonErrorHandler() {
-        BackOff backoff = new FixedBackOff(10000L, 4L);
-        return new DefaultErrorHandler(backoff );
-    }
-
 
 }
