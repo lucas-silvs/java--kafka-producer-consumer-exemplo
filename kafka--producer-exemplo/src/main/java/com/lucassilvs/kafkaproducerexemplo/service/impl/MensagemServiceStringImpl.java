@@ -1,7 +1,6 @@
 package com.lucassilvs.kafkaproducerexemplo.service.impl;
 
 import com.lucassilvs.kafkaproducerexemplo.gateways.KafkaPostUtils;
-import com.lucassilvs.kafkaproducerexemplo.gateways.kafka.UsuarioTesteAvro;
 import com.lucassilvs.kafkaproducerexemplo.service.MensagemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
