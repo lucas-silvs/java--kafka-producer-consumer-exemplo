@@ -23,8 +23,6 @@ import java.util.Map;
 @EnableKafka
 public class KafkaConsumerConfigAvro {
 
-
-
     @Bean
     public ConsumerFactory<String, UsuarioTesteAvro> consumerFactory(KafkaProperties kafkaProperties) {
         return new DefaultKafkaConsumerFactory<>(kafkaProperties.buildConsumerProperties());

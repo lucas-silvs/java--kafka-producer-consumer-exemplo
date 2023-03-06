@@ -43,7 +43,6 @@ Para acompanhar e validar se as mensagens estão sendo enviadas para o tópico, 
 ```
 bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic topico-teste --from-beginning
 ```
-
 ### Utilizando Docker
 
 Também é possivel executar o Kafka com o arquivo Docker disponibilizado no repositório na pasta "docker". Para subir o Kafka utilizando o Docker, deve executar o comando abaixo:
@@ -53,6 +52,28 @@ docker-compose up
 ```
 
 Com isso será criado o Broker Kafka, Zookeper, Schema Registry e o Kafka UI da Confluent, onde o gerenciamento será realizado pela interface e pode ser acessado acessando a url [Control Center](http://localhost:9021/).
+
+
+## Autorização de Producer/Consumer com ACL
+
+ACL (Acess Control List) é a estrategia de autorização que o Kafka utiliza para gerenciar permissões a um tópico.
+
+Abaixo está os comando para permitir, remover e listar as permissões a um tópico:
+
+Listar ACL de um tópico:
+```console
+
+```
+
+Remover ACL para um Consumer Group :
+```console
+bin/kafka-acls.sh --authorizer kafka.security.authorizer.AclAuthorizer --authorizer-properties zookeeper.connect=localhost:2181 --remove  --topic topico-teste
+```
+
+Adicionar ACL para um Consumer Group:
+```console
+
+```
 
 ## Referencias
 
