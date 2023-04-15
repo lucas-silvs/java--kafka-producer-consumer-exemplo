@@ -17,6 +17,6 @@ public class KafkaConsumerListenerAvroImpl  {
     @KafkaListener(topics = "${spring.kafka.nome-topico}", containerFactory = "kafkalisternerContainerFactory", groupId = "${spring.kafka.consumer.group-id}")
     public void consumindoMensagemAvro(ConsumerRecord<String,UsuarioTesteAvro> mensagemSerialized) {
         UsuarioTesteAvro mensagem = mensagemSerialized.value();
-        logger.info(String.format("Recebendo mensagem Avro - nome: %s id: %s saldo: %s", mensagem.getNome(), mensagem.getId(), mensagem.getSaldo());
+        logger.info(String.format("Recebendo mensagem Avro - nome: %s id: %s saldo: %s", mensagem.getNome(), mensagem.getId(), mensagem.getSaldo()));
     }
 }
