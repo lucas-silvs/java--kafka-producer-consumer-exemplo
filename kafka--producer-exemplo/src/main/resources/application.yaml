@@ -9,4 +9,6 @@ spring:
       number-of-tries: 0
       imdepotence: false
       timeout: 1000
+  application:
+    name: java--kafka-producer-exemplo
 
