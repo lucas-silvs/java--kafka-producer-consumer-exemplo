@@ -3,7 +3,6 @@ server:
 
 spring:
   kafka:
-    bootstrap-servers: localhost:9092
     producer:
       ack: 0
       number-of-tries: 0

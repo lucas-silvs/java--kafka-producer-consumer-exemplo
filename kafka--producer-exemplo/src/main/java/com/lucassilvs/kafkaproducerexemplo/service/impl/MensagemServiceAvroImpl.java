@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
-@Profile({"avro", "confluent"})
+@Profile({"avro", "confluent", "oidc"})
 @Service
 public class MensagemServiceAvroImpl implements MensagemService {
 
@@ -20,6 +20,7 @@ public class MensagemServiceAvroImpl implements MensagemService {
 
 
     public void postarMensagem(String mensagem) {
+
         UsuarioTesteAvro usuarioTesteAvro = UsuarioTesteAvro.newBuilder()
                 .setId(1)
                 .setNome(mensagem)

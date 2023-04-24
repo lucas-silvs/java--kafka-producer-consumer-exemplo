@@ -1,0 +1,40 @@
+spring:
+  kafka:
+    nome-topico: topico--teste
+    schema-registry:
+      url: ${URL_SCHEMA_REGISTRY}
+    properties:
+      basic:
+        auth:
+          credentials:
+            source: USER_INFO
+          user:
+            info:
+              username: ${SR_SECRET_KEY}
+              password: ${SR_SECRET_VALUE}
+
+      key_serializer: org.apache.kafka.common.serialization.StringSerializer
+      value_serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+      sasl:
+        mechanism: OAUTHBEARER
+        login:
+          callback:
+            handler:
+              class: "org.apache.kafka.common.security.oauthbearer.secured.OAuthBearerLoginCallbackHandler"
+        oauthbearer:
+          token:
+            endpoint:
+              url: https://login.microsoftonline.com/2a942e37-e25e-4c21-b549-ef27380dab0d/oauth2/v2.0/token
+
+        jaas:
+          config: "org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginModule required"
+        clientId: ${OIDC_CLIENT_ID}
+        clientSecret: ${OIDC_CLIENT_SECRET}
+    bootstrap-servers: ${URL_BOOTSTRAP_SERVER}
+
+security:
+#  protocol: SASL_SSL
+  protocol: SASL_PLAINTEXT
+extension_logicalCluster: lkc-m808gx
+extension_identityPoolId: pool-ndyw
+

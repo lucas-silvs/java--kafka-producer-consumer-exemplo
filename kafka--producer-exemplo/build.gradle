@@ -29,6 +29,10 @@ dependencies {
 	//AVRO - Schema Registry
 	implementation 'io.confluent:kafka-avro-serializer:7.3.1'
 
+	// https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
+	implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.2'
+
+
 
 }
 
