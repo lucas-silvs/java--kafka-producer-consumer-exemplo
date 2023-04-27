@@ -24,17 +24,13 @@ spring:
         oauthbearer:
           token:
             endpoint:
-              url: https://login.microsoftonline.com/2a942e37-e25e-4c21-b549-ef27380dab0d/oauth2/v2.0/token
+              url: ${OIDC_TOKEN_ENDPOINT}
 
         jaas:
-          config: "org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginModule required"
+          config: org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginModule required clientId="${spring.kafka.properties.sasl.clientId}" clientSecret="${spring.kafka.properties.sasl.clientSecret}";
         clientId: ${OIDC_CLIENT_ID}
         clientSecret: ${OIDC_CLIENT_SECRET}
     bootstrap-servers: ${URL_BOOTSTRAP_SERVER}
-
 security:
-#  protocol: SASL_SSL
-  protocol: SASL_PLAINTEXT
-extension_logicalCluster: lkc-m808gx
-extension_identityPoolId: pool-ndyw
-
+  protocol: SASL_SSL
+#  protocol: SASL_PLAINTEXT

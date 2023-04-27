@@ -4,6 +4,7 @@ import com.lucassilvs.kafkaproducerexemplo.gateways.kafka.UsuarioTesteAvro;
 import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig;
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
 import io.confluent.kafka.serializers.KafkaAvroSerializerConfig;
+import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.security.oauthbearer.secured.OAuthBearerLoginCallbackHandler;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -45,22 +46,12 @@ public class ProducerConfigConfluentOIDCProvider {
     @Value("${spring.kafka.properties.sasl.mechanism}")
     private String saslMechanism;
 
-    @Value("${spring.kafka.properties.sasl.login.callback.handler.class}")
-    private String saslLoginCallback;
-
-    @Value("${spring.kafka.properties.sasl.jaas.config}")
-    private String saslConfig;
-
-    @Value("${extension_logicalCluster}")
-    private String idCluster;
-
-    @Value("${extension_identityPoolId}")
-    private String idIdentityPool;
-
-    @Value("${}")
-    private  static  final String SAAS_JAAS_CONFIG = "org.apache.kafka.common.security.plain.PlainLoginModule required username=\"%s\" password=\"%s\";";
-    private  static  final String SAAS_JAAS_CONFIG2 = "org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginModule required clientId=\"%s\" scope=\".default\" clientSecret=\"%s\" grant_type=\"client_credentials\";";
-
+    private  static  final String SAAS_JAAS_CONFIG2 = "org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginModule required " +
+            "clientId=\"%s\" " +
+            "clientSecret=\"%s\" " +
+            "scope=\".default\" " +
+            "extension_logicalCluster=\"lkc-oqw1mj\" " +
+            "extension_identityPoolId=\"pool-ve8k\";";
 
     @Value("${spring.kafka.properties.sasl.clientId}")
     private String  clientId;
@@ -71,7 +62,6 @@ public class ProducerConfigConfluentOIDCProvider {
     @Value("${spring.kafka.properties.sasl.oauthbearer.token.endpoint.url}")
     private String tokenEndpoint;
 
-
     @Bean
     public Map<String, Object> producerConfigs() {
         Map<String, Object> props = new HashMap<>();
@@ -80,9 +70,10 @@ public class ProducerConfigConfluentOIDCProvider {
         props.put(org.apache.kafka.clients.producer.ProducerConfig.RETRIES_CONFIG, numberOfTries);
         props.put(org.apache.kafka.clients.producer.ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG, timeOut);
         props.put(org.apache.kafka.clients.producer.ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, imdepotence);
+        props.put(ProducerConfig.CLIENT_ID_CONFIG, "producer-teste");
 
         props.put("sasl.login.callback.handler.class", OAuthBearerLoginCallbackHandler.class);
-        props.put("sasl.jaas.config",  String.format(SAAS_JAAS_CONFIG2, clientId, clientSecret, idCluster, idIdentityPool));
+        props.put("sasl.jaas.config",  String.format(SAAS_JAAS_CONFIG2, clientId, clientSecret));
         props.put("sasl.mechanism", saslMechanism);
         props.put("security.protocol", securityProtocol);
         props.put("sasl.oauthbearer.token.endpoint.url", tokenEndpoint);

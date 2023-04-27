@@ -11,3 +11,10 @@ spring:
   application:
     name: java--kafka-producer-exemplo
 
+logging:
+  level:
+    org:
+      apache:
+        kafka: INFO
+
+
