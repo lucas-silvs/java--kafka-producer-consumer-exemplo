@@ -20,7 +20,7 @@ import java.util.Map;
 
 @Profile("oidc")
 @Configuration
-public class ProducerConfigConfluentOIDCProvider {
+public class ProducerConfigConfluentOIDCProviderAvro {
 
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
@@ -46,12 +46,11 @@ public class ProducerConfigConfluentOIDCProvider {
     @Value("${spring.kafka.properties.sasl.mechanism}")
     private String saslMechanism;
 
-    private  static  final String SAAS_JAAS_CONFIG2 = "org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginModule required " +
-            "clientId=\"%s\" " +
-            "clientSecret=\"%s\" " +
-            "scope=\".default\" " +
-            "extension_logicalCluster=\"lkc-oqw1mj\" " +
-            "extension_identityPoolId=\"pool-ve8k\";";
+    @Value("${extension.cluster}")
+    private String clusterId;
+
+    @Value("${extension.identity-pool}")
+    private String identityPool;
 
     @Value("${spring.kafka.properties.sasl.clientId}")
     private String  clientId;
@@ -61,6 +60,13 @@ public class ProducerConfigConfluentOIDCProvider {
 
     @Value("${spring.kafka.properties.sasl.oauthbearer.token.endpoint.url}")
     private String tokenEndpoint;
+
+    private  static  final String SAAS_JAAS_CONFIG = "org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginModule required " +
+            "clientId=\"%s\" " +
+            "clientSecret=\"%s\" " +
+            "scope=\".default\" " +
+            "extension_logicalCluster=\"%s\" " +
+            "extension_identityPoolId=\"%s\";";
 
     @Bean
     public Map<String, Object> producerConfigs() {
@@ -73,7 +79,7 @@ public class ProducerConfigConfluentOIDCProvider {
         props.put(ProducerConfig.CLIENT_ID_CONFIG, "producer-teste");
 
         props.put("sasl.login.callback.handler.class", OAuthBearerLoginCallbackHandler.class);
-        props.put("sasl.jaas.config",  String.format(SAAS_JAAS_CONFIG2, clientId, clientSecret));
+        props.put("sasl.jaas.config",  String.format(SAAS_JAAS_CONFIG, clientId, clientSecret, clusterId, identityPool));
         props.put("sasl.mechanism", saslMechanism);
         props.put("security.protocol", securityProtocol);
         props.put("sasl.oauthbearer.token.endpoint.url", tokenEndpoint);

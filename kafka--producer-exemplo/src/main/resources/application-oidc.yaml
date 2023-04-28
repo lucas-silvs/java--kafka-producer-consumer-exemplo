@@ -34,3 +34,7 @@ spring:
 security:
   protocol: SASL_SSL
 #  protocol: SASL_PLAINTEXT
+
+extension:
+  cluster: lkc-oqw1mj
+  identity-pool: pool-YPQ3
