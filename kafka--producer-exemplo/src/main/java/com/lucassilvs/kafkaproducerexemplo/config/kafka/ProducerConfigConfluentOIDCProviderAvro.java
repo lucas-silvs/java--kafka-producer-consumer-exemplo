@@ -40,6 +40,15 @@ public class ProducerConfigConfluentOIDCProviderAvro {
     @Value("${spring.kafka.schema-registry.url}")
     private String schemaRegistry;
 
+    @Value("${spring.kafka.properties.basic.auth.user.info.username}")
+    private String schemaRegistryUserinforUsername;
+
+    @Value("${spring.kafka.properties.basic.auth.user.info.password}")
+    private String schemaRegistryUserinforPassword;
+
+    @Value("${spring.kafka.properties.basic.auth.credentials.source}")
+    private String schemaRegistryCredentialsSource;
+
     @Value("${security.protocol}")
     private String securityProtocol;
 
@@ -61,10 +70,13 @@ public class ProducerConfigConfluentOIDCProviderAvro {
     @Value("${spring.kafka.properties.sasl.oauthbearer.token.endpoint.url}")
     private String tokenEndpoint;
 
+    @Value("${spring.kafka.properties.sasl.scope}")
+    private String scope;
+
     private  static  final String SAAS_JAAS_CONFIG = "org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginModule required " +
             "clientId=\"%s\" " +
             "clientSecret=\"%s\" " +
-            "scope=\".default\" " +
+            "scope=\"%s\" " +
             "extension_logicalCluster=\"%s\" " +
             "extension_identityPoolId=\"%s\";";
 
@@ -79,7 +91,7 @@ public class ProducerConfigConfluentOIDCProviderAvro {
         props.put(ProducerConfig.CLIENT_ID_CONFIG, "producer-teste");
 
         props.put("sasl.login.callback.handler.class", OAuthBearerLoginCallbackHandler.class);
-        props.put("sasl.jaas.config",  String.format(SAAS_JAAS_CONFIG, clientId, clientSecret, clusterId, identityPool));
+        props.put("sasl.jaas.config",  String.format(SAAS_JAAS_CONFIG, clientId, clientSecret,scope, clusterId, identityPool));
         props.put("sasl.mechanism", saslMechanism);
         props.put("security.protocol", securityProtocol);
         props.put("sasl.oauthbearer.token.endpoint.url", tokenEndpoint);
@@ -89,6 +101,10 @@ public class ProducerConfigConfluentOIDCProviderAvro {
         props.put(org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class);
         props.put(AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, schemaRegistry);
         props.put(KafkaAvroSerializerConfig.AVRO_REMOVE_JAVA_PROPS_CONFIG, true);
+
+        //Autenticação Schema Registry
+        props.put(AbstractKafkaSchemaSerDeConfig.USER_INFO_CONFIG, String.format("%s:%s",schemaRegistryUserinforUsername,schemaRegistryUserinforPassword));
+        props.put(AbstractKafkaSchemaSerDeConfig.BASIC_AUTH_CREDENTIALS_SOURCE, schemaRegistryCredentialsSource);
         return props;
     }
 

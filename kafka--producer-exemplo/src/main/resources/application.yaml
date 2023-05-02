@@ -15,6 +15,7 @@ logging:
   level:
     org:
       apache:
-        kafka: INFO
+        kafka: TRACE
+#    root: trace
 
 
