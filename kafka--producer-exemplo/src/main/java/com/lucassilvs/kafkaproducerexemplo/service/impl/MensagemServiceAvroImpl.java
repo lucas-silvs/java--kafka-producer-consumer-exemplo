@@ -2,6 +2,7 @@ package com.lucassilvs.kafkaproducerexemplo.service.impl;
 
 import com.lucassilvs.kafkaproducerexemplo.gateways.KafkaPostUtils;
 import com.lucassilvs.kafkaproducerexemplo.gateways.kafka.UsuarioTesteAvro;
+import com.lucassilvs.kafkaproducerexemplo.models.request.MensagemRequest;
 import com.lucassilvs.kafkaproducerexemplo.service.MensagemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,12 +20,12 @@ public class MensagemServiceAvroImpl implements MensagemService {
     private String nomeTopico;
 
 
-    public void postarMensagem(String mensagem) {
+    public void postarMensagem(MensagemRequest mensagem) {
 
         UsuarioTesteAvro usuarioTesteAvro = UsuarioTesteAvro.newBuilder()
                 .setId(1)
-                .setNome(mensagem)
-                .setSaldo("1000")
+                .setNome(mensagem.getMensagem())
+                .setSaldo(mensagem.getSaldo())
                 .build();
         kafkaPostUtils.postarMensagem(usuarioTesteAvro , nomeTopico);
     }

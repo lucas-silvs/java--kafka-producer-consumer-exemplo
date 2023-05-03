@@ -1,6 +1,7 @@
 package com.lucassilvs.kafkaproducerexemplo.service.impl;
 
 import com.lucassilvs.kafkaproducerexemplo.gateways.KafkaPostUtils;
+import com.lucassilvs.kafkaproducerexemplo.models.request.MensagemRequest;
 import com.lucassilvs.kafkaproducerexemplo.service.MensagemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,9 +19,9 @@ public class MensagemServiceStringImpl implements MensagemService {
     private String nomeTopico;
 
 
-    public void postarMensagem(String mensagem) {
+    public void postarMensagem(MensagemRequest mensagem) {
 
-        kafkaPostUtils.postarMensagem(mensagem , nomeTopico);
+        kafkaPostUtils.postarMensagem(mensagem.getMensagem() , nomeTopico);
     }
 
 

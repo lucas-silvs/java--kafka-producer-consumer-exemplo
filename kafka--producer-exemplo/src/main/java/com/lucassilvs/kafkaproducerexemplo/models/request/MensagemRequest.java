@@ -4,6 +4,16 @@ package com.lucassilvs.kafkaproducerexemplo.models.request;
 public class MensagemRequest {
     private String mensagem;
 
+    private String saldo = "1000";
+
+    public String getSaldo() {
+        return saldo;
+    }
+
+    public void setSaldo(String saldo) {
+        this.saldo = saldo;
+    }
+
     public String getMensagem() {
         return mensagem;
     }
