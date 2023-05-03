@@ -38,3 +38,4 @@ security:
 extension:
   cluster: ${CLUSTER_ID}
   identity-pool: ${IDENTITY_POOL_ID}
+

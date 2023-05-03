@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
-@Profile({"avro", "confluent"})
+@Profile({"avro", "confluent", "oidc"})
 @Service
 public class KafkaConsumerListenerAvroImpl  {
 
