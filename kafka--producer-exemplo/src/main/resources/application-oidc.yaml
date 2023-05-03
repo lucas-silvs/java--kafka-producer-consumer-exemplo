@@ -12,22 +12,13 @@ spring:
             info:
               username: ${SR_SECRET_KEY}
               password: ${SR_SECRET_VALUE}
-
-      key_serializer: org.apache.kafka.common.serialization.StringSerializer
-      value_serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
       sasl:
         mechanism: OAUTHBEARER
-        login:
-          callback:
-            handler:
-              class: "org.apache.kafka.common.security.oauthbearer.secured.OAuthBearerLoginCallbackHandler"
         oauthbearer:
           token:
             endpoint:
               url: ${OIDC_TOKEN_ENDPOINT}
-
         jaas:
-          config: org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginModule required clientId="${spring.kafka.properties.sasl.clientId}" clientSecret="${spring.kafka.properties.sasl.clientSecret}";
         clientId: ${OIDC_CLIENT_ID}
         clientSecret: ${OIDC_CLIENT_SECRET}
         scope: ${OIDC_SCOPE}

@@ -27,7 +27,6 @@ spring:
               url: ${OIDC_TOKEN_ENDPOINT}
 
         jaas:
-          config: org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginModule required clientId="${spring.kafka.properties.sasl.clientId}" clientSecret="${spring.kafka.properties.sasl.clientSecret}";
         clientId: ${OIDC_CLIENT_ID}
         clientSecret: ${OIDC_CLIENT_SECRET}
         scope: ${OIDC_SCOPE}
