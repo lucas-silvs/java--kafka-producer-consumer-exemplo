@@ -19,6 +19,7 @@ import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -112,6 +113,10 @@ public class KafkaConsumerConfigConfluentOIDCProviderAvro {
     public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String,UsuarioTesteAvro>> kafkalisternerContainerFactory(){
         ConcurrentKafkaListenerContainerFactory<String,UsuarioTesteAvro> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
+
+        //Adicionando retry para caso de erro de autenticação com o broker (GroupAuthorizationException)
+        factory.getContainerProperties().setAuthExceptionRetryInterval(Duration.ofSeconds(7));
+
         return factory;
     }
 
