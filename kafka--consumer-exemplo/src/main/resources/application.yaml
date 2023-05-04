@@ -7,6 +7,8 @@ spring:
     consumer:
       group-id: consumer-teste
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      timeout: 1000
 
-  main:
-    allow-bean-definition-overriding: true
+
+  application:
+    name: java--kafka-consumer-exemplo

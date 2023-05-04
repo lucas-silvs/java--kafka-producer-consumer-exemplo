@@ -53,26 +53,25 @@ docker-compose up
 
 Com isso será criado o Broker Kafka, Zookeper, Schema Registry e o Kafka UI da Confluent, onde o gerenciamento será realizado pela interface e pode ser acessado acessando a url [Control Center](http://localhost:9021/).
 
+## Autenticação com Oauth2 - Keycloak
+Para isso, será necessário executar o keycloak em uma instancia EC2 utilizando Docker executando o comando abaixo.
 
-## Autorização de Producer/Consumer com ACL
+Para isso será necessário integrar com um banco de dados MySQL, onde primeiro deve  criar o network:
 
-ACL (Acess Control List) é a estrategia de autorização que o Kafka utiliza para gerenciar permissões a um tópico.
-
-Abaixo está os comando para permitir, remover e listar as permissões a um tópico:
-
-Listar ACL de um tópico:
-```console
-
+```shell
+docker network create keycloak-network
 ```
 
-Remover ACL para um Consumer Group :
-```console
-bin/kafka-acls.sh --authorizer kafka.security.authorizer.AclAuthorizer --authorizer-properties zookeeper.connect=localhost:2181 --remove  --topic topico-teste
+com o network criado, será criado o docker com o mysql na rede:
+
+```shell
+docker run --name mysql -d --net keycloak-network -e MYSQL_DATABASE=keycloak -e MYSQL_USER=keycloak -e MYSQL_PASSWORD=password -e MYSQL_ROOT_PASSWORD=root_password mysql
 ```
 
-Adicionar ACL para um Consumer Group:
-```console
+com o banco criado, será criado o Keycloak:
 
+```shell
+docker run -p 80:8443 -p 443:8443 -p 8080:8443  --net keycloak-network -e KEYCLOAK_USER=username -e KEYCLOAK_PASSWORD=password jboss/keycloak
 ```
 
 ## Referencias
