@@ -1,4 +1,6 @@
 rootProject.name = 'java--kafka-producer-consumer-exemplo'
 
 include ':kafka--consumer-exemplo',
-        'kafka--producer-exemplo'
+        'kafka--producer-exemplo',
+        'lib--kafka-clients',
+        'lib--teste'

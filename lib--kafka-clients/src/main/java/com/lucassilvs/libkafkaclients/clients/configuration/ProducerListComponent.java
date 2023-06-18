@@ -16,14 +16,17 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Configuration
-public class ProducerConfig {
+public class ProducerListComponent {
 
     @Autowired
     private ListProducerProperties listProducerProperties;
+
+    public ProducerListComponent(ListProducerProperties listProducerProperties) {
+        this.listProducerProperties = listProducerProperties;
+    }
 
     public Map<String, Object> producerConfigs(ProducerCommonProperties producerProperties) {
         Map<String, Object> props = new HashMap<>();
