@@ -2,6 +2,7 @@ package com.lucassilvs.libkafkaclients.clients.configuration;
 
 
 import com.lucassilvs.libkafkaclients.clients.authentication.KafkaAuthProperties;
+import com.lucassilvs.libkafkaclients.clients.producer.ListProducerProperties;
 import com.lucassilvs.libkafkaclients.clients.producer.ProducerCommonProperties;
 import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig;
 import io.confluent.kafka.serializers.KafkaAvroSerializerConfig;
@@ -22,9 +23,7 @@ import java.util.Map;
 public class ProducerConfig {
 
     @Autowired
-    private  List<ProducerCommonProperties> ProducerProperties;
-
-    public static List<KafkaTemplate> listProducers;
+    private ListProducerProperties listProducerProperties;
 
     public Map<String, Object> producerConfigs(ProducerCommonProperties producerProperties) {
         Map<String, Object> props = new HashMap<>();
@@ -42,7 +41,6 @@ public class ProducerConfig {
 
         switch (kafkaAuthProperties.getSaslMechanism()){
             case "OAUTHBEARER":
-
                 String saslJaasConfig = kafkaAuthProperties.getSaslJaasConfig();
 
                 if (kafkaAuthProperties.getExtensions() != null) {
@@ -61,7 +59,6 @@ public class ProducerConfig {
             case "PLAIN", "SCRAM-SHA-256", "SCRAM-SHA-512":
                 props.put(SaslConfigs.SASL_JAAS_CONFIG, String.format(kafkaAuthProperties.getSaslJaasConfig(), kafkaAuthProperties.getUsername(), kafkaAuthProperties.getPassword()));
                 break;
-
         }
 
         //Utilizando AVRO
@@ -83,14 +80,14 @@ public class ProducerConfig {
     }
 
     @Bean
-    public List<KafkaTemplate> kafkaTemplate() {
+    public Map<String, KafkaTemplate> kafkaTemplate() {
+        Map<String, KafkaTemplate> producers = new HashMap<>();
 
-        for (ProducerCommonProperties producerProperties : ProducerProperties) {
-            Map<String, Object> props = producerConfigs(producerProperties);
-            KafkaTemplate<String, Object> kafkaTemplate = new KafkaTemplate<>(producerFactory(producerProperties));
-            listProducers.add(kafkaTemplate);
-        }
-        return listProducers;
+        producers.forEach((name, producerPropertie) -> {
+            KafkaTemplate<String, Object> kafkaTemplate = new KafkaTemplate<>(producerFactory(listProducerProperties.getProducers().get(producerPropertie)));
+            producers.put(name, kafkaTemplate);
+        });
+        return producers;
     }
 }
 

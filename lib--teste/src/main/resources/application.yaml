@@ -1,0 +1,16 @@
+server:
+  port: 5000
+
+
+kafka:
+  producers:
+    - producer1:
+        nomeTopico: topico--teste
+        keySerializer: org.apache.kafka.common.serialization.StringSerializer
+        valueSerializer: org.apache.kafka.common.serialization.StringSerializer
+        bootstrapServers: localhost:9092
+    - producer2:
+        nomeTopico: topico--teste2
+        keySerializer: org.apache.kafka.common.serialization.StringSerializer
+        valueSerializer: org.apache.kafka.common.serialization.StringSerializer
+        bootstrapServers: localhost:9092

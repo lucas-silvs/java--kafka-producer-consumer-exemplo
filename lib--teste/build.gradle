@@ -1,0 +1,36 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.1.0'
+    id 'io.spring.dependency-management' version '1.1.0'
+}
+
+group = 'com.lucassilvs'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    sourceCompatibility = '17'
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        url "https://packages.confluent.io/maven"
+    }
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    implementation 'org.springframework.kafka:spring-kafka'
+
+    //AVRO - Schema Registry
+    implementation 'io.confluent:kafka-avro-serializer:7.3.1'
+
+    implementation files('/home/somnus/Documentos/git/java--kafka-producer-consumer-exemplo/lib--kafka-clients/build/libs/lib--kafka-clients-0.0.1-SNAPSHOT.jar')  // Caminho para o arquivo JAR da lib
+
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
