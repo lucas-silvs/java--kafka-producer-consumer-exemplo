@@ -14,6 +14,8 @@ kafka:
     producer2:
         nomeTopico: topico--teste2
         keySerializer: org.apache.kafka.common.serialization.StringSerializer
-        valueSerializer: org.apache.kafka.common.serialization.StringSerializer
+        valueSerializer: io.confluent.kafka.serializers.KafkaAvroSerializer
         bootstrapServers: localhost:9092
         clientId: teste2
+        schemaRegistry:
+            url: http://localhost:8081

@@ -6,5 +6,5 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 public interface MensagemController {
-    ResponseEntity<Object> postarMensagem (@RequestBody MensagemRequest mensagem);
+    ResponseEntity<Object> postarMensagem (String topicName, @RequestBody MensagemRequest mensagem);
 }
