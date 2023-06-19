@@ -1,7 +1,6 @@
 package com.lucassilvs.libkafkaclients;
 
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -12,22 +11,20 @@ import java.util.Map;
 @Component
 public class KafkaClientsManager {
 
+    private final Map<String, KafkaTemplate> listaProducers;
+    private final Map<String, ConcurrentKafkaListenerContainerFactory<String, Object>> listaConsumers;
 
-    private static Map<String, KafkaTemplate> listaProducers;
-
-    private static Map<String, ConcurrentKafkaListenerContainerFactory<String, Object>> listaConsumers;
-
-    @Autowired
-    public KafkaClientsManager(@Qualifier("listProducers") Map<String, KafkaTemplate> listaProducers, @Qualifier ("listConsumers") Map<String, ConcurrentKafkaListenerContainerFactory<String, Object>> listaConsumers) {
-        KafkaClientsManager.listaProducers = listaProducers;
-        KafkaClientsManager.listaConsumers = listaConsumers;
+    public KafkaClientsManager(@Qualifier("listProducers") Map<String, KafkaTemplate> listaProducers,
+                               @Qualifier("listConsumers") Map<String, ConcurrentKafkaListenerContainerFactory<String, Object>> listaConsumers) {
+        this.listaProducers = listaProducers;
+        this.listaConsumers = listaConsumers;
     }
 
-    public static ConcurrentKafkaListenerContainerFactory buscaConsumer(String nomeConsumer) {
+    public ConcurrentKafkaListenerContainerFactory<String, Object> buscaConsumer(String nomeConsumer) {
         return listaConsumers.get(nomeConsumer);
     }
 
-    public static KafkaTemplate buscaProducer(String nomeProducer) {
+    public KafkaTemplate buscaProducer(String nomeProducer) {
         return listaProducers.get(nomeProducer);
     }
 }
