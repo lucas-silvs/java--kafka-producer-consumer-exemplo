@@ -1,8 +1,8 @@
-package com.lucassilvs.libteste.lib;
+package com.lucassilvs.libteste.lib.properties;
 
 
-import com.lucassilvs.libteste.lib.consumer.ConsumerCommonProperties;
-import com.lucassilvs.libteste.lib.producer.ProducerCommonProperties;
+import com.lucassilvs.libteste.lib.properties.consumer.ConsumerCommonProperties;
+import com.lucassilvs.libteste.lib.properties.producer.ProducerCommonProperties;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;

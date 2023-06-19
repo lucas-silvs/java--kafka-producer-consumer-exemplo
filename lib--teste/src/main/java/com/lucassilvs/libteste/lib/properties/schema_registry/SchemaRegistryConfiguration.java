@@ -1,4 +1,4 @@
-package com.lucassilvs.libteste.lib.schema_registry;
+package com.lucassilvs.libteste.lib.properties.schema_registry;
 
 import lombok.Data;
 

@@ -2,7 +2,7 @@ package com.lucassilvs.libteste.controller.impl;
 
 import com.lucassilvs.libteste.controller.MensagemController;
 import com.lucassilvs.libteste.request.MensagemRequest;
-import com.lucassilvs.libteste.service.MensagemService;
+import com.lucassilvs.libteste.service.producer.MensagemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;

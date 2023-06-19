@@ -1,4 +1,4 @@
-package com.lucassilvs.libteste.service;
+package com.lucassilvs.libteste.service.producer;
 
 import com.lucassilvs.libteste.request.MensagemRequest;
 public interface MensagemService {

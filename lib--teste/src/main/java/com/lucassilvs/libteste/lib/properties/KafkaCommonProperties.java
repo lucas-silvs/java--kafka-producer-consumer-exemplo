@@ -1,8 +1,8 @@
-package com.lucassilvs.libteste.lib;
+package com.lucassilvs.libteste.lib.properties;
 
 
-import com.lucassilvs.libteste.lib.authentication.KafkaAuthProperties;
-import com.lucassilvs.libteste.lib.schema_registry.SchemaRegistryConfiguration;
+import com.lucassilvs.libteste.lib.properties.authentication.KafkaAuthProperties;
+import com.lucassilvs.libteste.lib.properties.schema_registry.SchemaRegistryConfiguration;
 import jakarta.annotation.Nonnull;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;

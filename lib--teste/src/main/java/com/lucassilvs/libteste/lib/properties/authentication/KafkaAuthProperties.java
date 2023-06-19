@@ -1,4 +1,4 @@
-package com.lucassilvs.libteste.lib.authentication;
+package com.lucassilvs.libteste.lib.properties.authentication;
 
 import jakarta.annotation.Nonnull;
 import lombok.Data;

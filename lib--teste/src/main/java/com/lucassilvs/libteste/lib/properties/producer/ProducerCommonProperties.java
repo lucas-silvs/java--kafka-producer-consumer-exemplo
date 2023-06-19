@@ -1,6 +1,6 @@
-package com.lucassilvs.libteste.lib.producer;
+package com.lucassilvs.libteste.lib.properties.producer;
 
-import com.lucassilvs.libteste.lib.KafkaCommonProperties;
+import com.lucassilvs.libteste.lib.properties.KafkaCommonProperties;
 import lombok.Data;
 @Data
 public class ProducerCommonProperties extends KafkaCommonProperties {
