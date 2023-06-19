@@ -1,6 +1,6 @@
-package com.lucassilvs.libteste.lib.properties.consumer;
+package com.lucassilvs.libkafkaclients.properties.consumer;
 
-import com.lucassilvs.libteste.lib.properties.KafkaCommonProperties;
+import com.lucassilvs.libkafkaclients.properties.KafkaCommonProperties;
 import lombok.Data;
 @Data
 public class ConsumerCommonProperties extends KafkaCommonProperties {

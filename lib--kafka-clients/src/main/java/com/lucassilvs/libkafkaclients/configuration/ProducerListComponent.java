@@ -1,9 +1,9 @@
-package com.lucassilvs.libteste.lib.configuration;
+package com.lucassilvs.libkafkaclients.configuration;
 
-import com.lucassilvs.libteste.lib.properties.ListProducersAndConsumersProperties;
-import com.lucassilvs.libteste.lib.properties.authentication.KafkaAuthProperties;
-import com.lucassilvs.libteste.lib.properties.producer.ProducerCommonProperties;
-import com.lucassilvs.libteste.lib.properties.schema_registry.SchemaRegistryConfiguration;
+import com.lucassilvs.libkafkaclients.properties.ListProducersAndConsumersProperties;
+import com.lucassilvs.libkafkaclients.properties.authentication.KafkaAuthProperties;
+import com.lucassilvs.libkafkaclients.properties.producer.ProducerCommonProperties;
+import com.lucassilvs.libkafkaclients.properties.schema_registry.SchemaRegistryConfiguration;
 import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig;
 import jakarta.annotation.Nonnull;
 import lombok.Data;
@@ -11,6 +11,7 @@ import org.apache.kafka.common.config.SaslConfigs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
@@ -21,6 +22,7 @@ import java.util.Map;
 
 @Configuration
 @Data
+@Primary
 public class ProducerListComponent {
 
     @Autowired
@@ -103,6 +105,7 @@ public class ProducerListComponent {
 
     @Bean("listProducers")
     public Map<String, KafkaTemplate> listaKafkaTemplate() {
+        System.out.println("Inicializando lista de producers");
         Map<String, KafkaTemplate> producers = new HashMap<>();
 
         listProducerProperties.getProducers().forEach((name, producerPropertie) -> {

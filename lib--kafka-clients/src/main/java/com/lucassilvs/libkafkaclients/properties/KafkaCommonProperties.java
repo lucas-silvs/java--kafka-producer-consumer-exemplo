@@ -1,16 +1,13 @@
-package com.lucassilvs.libkafkaclients.lib;
+package com.lucassilvs.libkafkaclients.properties;
 
 
-import com.lucassilvs.libteste.lib.authentication.KafkaAuthProperties;
-import com.lucassilvs.libteste.lib.schema_registry.SchemaRegistryConfiguration;
+import com.lucassilvs.libkafkaclients.properties.authentication.KafkaAuthProperties;
+import com.lucassilvs.libkafkaclients.properties.schema_registry.SchemaRegistryConfiguration;
 import jakarta.annotation.Nonnull;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
 
-@Getter
-@Setter
+
 @Data
 public class KafkaCommonProperties {
 

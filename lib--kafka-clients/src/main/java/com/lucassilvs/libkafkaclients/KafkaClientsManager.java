@@ -1,4 +1,4 @@
-package com.lucassilvs.libteste.configuration;
+package com.lucassilvs.libkafkaclients;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,11 +27,7 @@ public class KafkaClientsManager {
         return listaConsumers.get(nomeConsumer);
     }
 
-
     public static KafkaTemplate buscaProducer(String nomeProducer) {
         return listaProducers.get(nomeProducer);
     }
-
-
-
 }

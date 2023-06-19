@@ -1,10 +1,10 @@
-package com.lucassilvs.libteste.lib.configuration;
+package com.lucassilvs.libkafkaclients.configuration;
 
 
-import com.lucassilvs.libteste.lib.properties.ListProducersAndConsumersProperties;
-import com.lucassilvs.libteste.lib.properties.authentication.KafkaAuthProperties;
-import com.lucassilvs.libteste.lib.properties.consumer.ConsumerCommonProperties;
-import com.lucassilvs.libteste.lib.properties.schema_registry.SchemaRegistryConfiguration;
+import com.lucassilvs.libkafkaclients.properties.ListProducersAndConsumersProperties;
+import com.lucassilvs.libkafkaclients.properties.authentication.KafkaAuthProperties;
+import com.lucassilvs.libkafkaclients.properties.consumer.ConsumerCommonProperties;
+import com.lucassilvs.libkafkaclients.properties.schema_registry.SchemaRegistryConfiguration;
 import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig;
 import jakarta.annotation.Nonnull;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -103,16 +103,14 @@ public class ConsumerListComponent {
 
     @Bean("listConsumers")
     public Map<String, ConcurrentKafkaListenerContainerFactory<String, Object>> listaKafkaTemplate() {
+        System.out.println("Inicializando consumers");
         Map<String, ConcurrentKafkaListenerContainerFactory<String, Object>> consumers = new HashMap<>();
 
         producersAndConsumersProperties.getConsumers().forEach((name, consumerProperties) -> {
             ConcurrentKafkaListenerContainerFactory<String, Object> factory = new ConcurrentKafkaListenerContainerFactory<>();
             factory.setConsumerFactory(producerFactory(consumerProperties));
             consumers.put(name, factory);
-
-
         });
-
         return consumers;
     }
 

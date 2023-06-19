@@ -1,8 +1,8 @@
-package com.lucassilvs.libteste.lib.properties;
+package com.lucassilvs.libkafkaclients.properties;
 
 
-import com.lucassilvs.libteste.lib.properties.consumer.ConsumerCommonProperties;
-import com.lucassilvs.libteste.lib.properties.producer.ProducerCommonProperties;
+import com.lucassilvs.libkafkaclients.properties.consumer.ConsumerCommonProperties;
+import com.lucassilvs.libkafkaclients.properties.producer.ProducerCommonProperties;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;

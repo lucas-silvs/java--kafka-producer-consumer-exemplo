@@ -1,4 +1,4 @@
-package com.lucassilvs.libteste.lib.properties.authentication;
+package com.lucassilvs.libkafkaclients.properties.authentication;
 
 import jakarta.annotation.Nonnull;
 import lombok.Data;
