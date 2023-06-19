@@ -4,13 +4,16 @@ server:
 
 kafka:
   producers:
-    - producer1:
+    producer1:
         nomeTopico: topico--teste
         keySerializer: org.apache.kafka.common.serialization.StringSerializer
         valueSerializer: org.apache.kafka.common.serialization.StringSerializer
         bootstrapServers: localhost:9092
-    - producer2:
+        requestTimeoutMs: 10000
+        clientId: teste
+    producer2:
         nomeTopico: topico--teste2
         keySerializer: org.apache.kafka.common.serialization.StringSerializer
         valueSerializer: org.apache.kafka.common.serialization.StringSerializer
         bootstrapServers: localhost:9092
+        clientId: teste2

@@ -22,13 +22,18 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
+
     implementation 'org.springframework.kafka:spring-kafka'
 
     //AVRO - Schema Registry
     implementation 'io.confluent:kafka-avro-serializer:7.3.1'
 
-    implementation files('/home/somnus/Documentos/git/java--kafka-producer-consumer-exemplo/lib--kafka-clients/build/libs/lib--kafka-clients-0.0.1-SNAPSHOT.jar')  // Caminho para o arquivo JAR da lib
+//    implementation files('/home/somnus/Documentos/git/java--kafka-producer-consumer-exemplo/lib--kafka-clients/build/libs/lib--kafka-clients-0.0.1-SNAPSHOT.jar')  // Caminho para o arquivo JAR da lib
 
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
 }
 
 tasks.named('test') {

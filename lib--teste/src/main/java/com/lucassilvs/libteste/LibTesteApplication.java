@@ -2,8 +2,10 @@ package com.lucassilvs.libteste;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
-@SpringBootApplication
+@SpringBootApplication (scanBasePackages = "com.lucassilvs.libteste")
+@EnableConfigurationProperties
 public class LibTesteApplication {
 
     public static void main(String[] args) {

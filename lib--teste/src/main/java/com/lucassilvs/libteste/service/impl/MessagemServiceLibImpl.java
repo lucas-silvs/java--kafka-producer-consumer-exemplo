@@ -1,12 +1,10 @@
 package com.lucassilvs.libteste.service.impl;
 
 
-import com.lucassilvs.libkafkaclients.clients.producer.ProducerMap;
+import com.lucassilvs.libteste.lib.ProducerListComponent;
 import com.lucassilvs.libteste.request.MensagemRequest;
 import com.lucassilvs.libteste.service.MensagemService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Profile;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
@@ -17,12 +15,12 @@ import java.util.Map;
 public class MessagemServiceLibImpl implements MensagemService {
 
 
-
+    // injeta a lista de producers do bean listaKafkaTemplate
     @Autowired
-    private Map<String, KafkaTemplate> producers;
+    private ProducerListComponent listaKafkaTemplate;
 
     public void postarMensagem(MensagemRequest mensagem) {
-        KafkaTemplate kafkaTemplate = producers.get("producer1");
+        Map<String, KafkaTemplate> kafkaTemplateMap = listaKafkaTemplate.listaKafkaTemplate();
         System.out.println("Mensagem: " + mensagem.getMensagem() + " Saldo: " + mensagem.getSaldo());
 
     }
