@@ -140,3 +140,12 @@ Maven:
         <systemPath>${project.basedir}/lib--kafka-clients/build/libs/lib--kafka-clients-0.0.1-SNAPSHOT.jar</systemPath>
     </dependency>
 ```
+
+## Referencias
+- [Spring Kafka](https://docs.spring.io/spring-kafka/docs/current/reference/html/#reference)
+- [Confluent Schema Registry](https://docs.confluent.io/platform/current/schema-registry/index.html)
+- [Confluent Schema Registry authentication](https://docs.confluent.io/platform/current/schema-registry/security/index.html)
+- [Confluent Avro Serializer](https://docs.confluent.io/platform/current/schema-registry/serdes-develop/index.html#serdes-develop)
+- [Confluent Oauthbearer Authentication](https://docs.confluent.io/platform/current/kafka/authentication_sasl/authentication_sasl_oauth.html)
+- [Confluent PLAIN Authentication](https://docs.confluent.io/platform/current/kafka/authentication_sasl/authentication_sasl_plain.html)
+- [Confluent SCRAM Authentication](https://docs.confluent.io/platform/current/kafka/authentication_sasl/authentication_sasl_scram.html)
