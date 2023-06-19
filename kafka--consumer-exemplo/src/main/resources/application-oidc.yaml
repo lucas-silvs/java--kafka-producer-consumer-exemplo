@@ -14,7 +14,7 @@ spring:
               password: ${SR_SECRET_VALUE}
 
       key_serializer: org.apache.kafka.common.serialization.StringSerializer
-      value_serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+      value_serializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
       sasl:
         mechanism: OAUTHBEARER
         login:

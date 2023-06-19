@@ -17,7 +17,7 @@ public class MensagemControllerImpl  implements MensagemController {
     @Autowired
     private MensagemService mensagemService;
 
-    @PostMapping("/postar-mensagem")
+    @PostMapping
     public ResponseEntity<Object> postarMensagem(MensagemRequest mensagem) {
         mensagemService.postarMensagem(mensagem);
         return ResponseEntity.ok("Mensagem postada com sucesso");
