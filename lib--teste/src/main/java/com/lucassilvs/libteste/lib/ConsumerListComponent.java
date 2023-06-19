@@ -1,40 +1,42 @@
 package com.lucassilvs.libteste.lib;
 
+
 import com.lucassilvs.libteste.lib.authentication.KafkaAuthProperties;
-import com.lucassilvs.libteste.lib.producer.ProducerCommonProperties;
+import com.lucassilvs.libteste.lib.consumer.ConsumerCommonProperties;
 import com.lucassilvs.libteste.lib.schema_registry.SchemaRegistryConfiguration;
 import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig;
 import jakarta.annotation.Nonnull;
-import lombok.Data;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.config.SaslConfigs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.kafka.core.DefaultKafkaProducerFactory;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.core.ProducerFactory;
+import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
+import org.springframework.kafka.config.KafkaListenerContainerFactory;
+import org.springframework.kafka.core.ConsumerFactory;
+import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-@Data
-public class ProducerListComponent {
+public class ConsumerListComponent {
 
     @Autowired
-    private ListProducersAndConsumersProperties listProducerProperties;
+    private ListProducersAndConsumersProperties producersAndConsumersProperties;
 
-    public Map<String, Object> producerConfigs(ProducerCommonProperties producerProperties) {
+
+    public Map<String, Object> consumerConfigs(ConsumerCommonProperties consumerCommonProperties) {
         Map<String, Object> props = new HashMap<>();
 
-        props.put(org.apache.kafka.clients.producer.ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, producerProperties.getBootstrapServers());
-        props.put(org.apache.kafka.clients.producer.ProducerConfig.CLIENT_ID_CONFIG, producerProperties.getClientId());
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, consumerCommonProperties.getBootstrapServers());
+        props.put(ConsumerConfig.CLIENT_ID_CONFIG, consumerCommonProperties.getClientId());
 
-        KafkaAuthProperties kafkaAuthProperties = producerProperties.getAuth();
-        SchemaRegistryConfiguration registryConfiguration = producerProperties.getSchemaRegistry();
+        KafkaAuthProperties kafkaAuthProperties = consumerCommonProperties.getAuth();
+        SchemaRegistryConfiguration registryConfiguration = consumerCommonProperties.getSchemaRegistry();
 
-        processFields(props, producerProperties);
+        processFields(props, consumerCommonProperties);
 
         if( kafkaAuthProperties != null ) {
 
@@ -73,22 +75,22 @@ public class ProducerListComponent {
         return props;
     }
 
-    private Map<String, Object> processFields(Map<String, Object> props, ProducerCommonProperties producerProperties) {
-            Field[] fields = ProducerCommonProperties.class.getDeclaredFields();
-            for (Field field : fields) {
-                field.setAccessible(true);
-                try {
-                    Object value = field.get(producerProperties);
-                    if (value != null || field.isAnnotationPresent(Nonnull.class)) {
-                        String configKey = convertFieldNameToConfigKey(field.getName());
-                        props.put(configKey, value);
-                    }
-                } catch (IllegalAccessException e) {
-                    throw new RuntimeException(e);
-                    // Tratar a exceção adequadamente
+    private Map<String, Object> processFields(Map<String, Object> props, ConsumerCommonProperties kafkaProperties) {
+        Field[] fields = ConsumerCommonProperties.class.getDeclaredFields();
+        for (Field field : fields) {
+            field.setAccessible(true);
+            try {
+                Object value = field.get(kafkaProperties);
+                if (value != null || field.isAnnotationPresent(Nonnull.class)) {
+                    String configKey = convertFieldNameToConfigKey(field.getName());
+                    props.put(configKey, value);
                 }
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+                // Tratar a exceção adequadamente
             }
-            return props;
+        }
+        return props;
     }
 
     private String convertFieldNameToConfigKey(String fieldName) {
@@ -96,19 +98,19 @@ public class ProducerListComponent {
         return String.join(".", parts).toLowerCase();
     }
 
-    public ProducerFactory producerFactory(ProducerCommonProperties producerCommonProperties) {
-        return new DefaultKafkaProducerFactory<>(producerConfigs(producerCommonProperties));
+    public ConsumerFactory producerFactory(ConsumerCommonProperties consumerCommonProperties) {
+        return new DefaultKafkaConsumerFactory(consumerConfigs(consumerCommonProperties));
     }
 
     @Bean("listProducers")
-    public Map<String, KafkaTemplate> listaKafkaTemplate() {
-        Map<String, KafkaTemplate> producers = new HashMap<>();
+    public Map<String, KafkaListenerContainerFactory> listaKafkaTemplate() {
+        Map<String, KafkaListenerContainerFactory> consumers = new HashMap<>();
 
-        listProducerProperties.getProducers().forEach((name, producerPropertie) -> {
-            KafkaTemplate<String, Object> kafkaTemplate = new KafkaTemplate<>(producerFactory(producerPropertie));
-            producers.put(name, kafkaTemplate);
+        producersAndConsumersProperties.getConsumers().forEach((name, consumerProperties) -> {
+            KafkaListenerContainerFactory factory = new ConcurrentKafkaListenerContainerFactory();
+            factory.
         });
-        return producers;
+        return consumers;
     }
-}
 
+}

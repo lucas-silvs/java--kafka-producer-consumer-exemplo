@@ -5,17 +5,26 @@ server:
 kafka:
   producers:
     producer1:
-        nomeTopico: topico--teste
-        keySerializer: org.apache.kafka.common.serialization.StringSerializer
-        valueSerializer: org.apache.kafka.common.serialization.StringSerializer
-        bootstrapServers: localhost:9092
-        requestTimeoutMs: 10000
-        clientId: teste
+      nomeTopico: topico--teste
+      keySerializer: org.apache.kafka.common.serialization.StringSerializer
+      valueSerializer: org.apache.kafka.common.serialization.StringSerializer
+      bootstrapServers: localhost:9092
+      requestTimeoutMs: 10000
+      clientId: teste
     producer2:
-        nomeTopico: topico--teste2
-        keySerializer: org.apache.kafka.common.serialization.StringSerializer
-        valueSerializer: io.confluent.kafka.serializers.KafkaAvroSerializer
-        bootstrapServers: localhost:9092
-        clientId: teste2
-        schemaRegistry:
-            url: http://localhost:8081
+      nomeTopico: topico--teste2
+      keySerializer: org.apache.kafka.common.serialization.StringSerializer
+      valueSerializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+      bootstrapServers: localhost:9092
+      clientId: teste2
+      schemaRegistry:
+        url: http://localhost:8081
+
+  consumers:
+    consumer1:
+      nomeTopico: topico--teste
+      keyDeserializer: org.apache.kafka.common.serialization.StringDeserializer
+      valueDeserializer: org.apache.kafka.common.serialization.StringDeserializer
+      bootstrapServers: localhost:9092
+      groupId: consumer-teste
+      clientId: teste

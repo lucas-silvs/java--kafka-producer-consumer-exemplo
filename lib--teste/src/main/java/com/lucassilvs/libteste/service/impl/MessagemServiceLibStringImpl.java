@@ -1,7 +1,6 @@
 package com.lucassilvs.libteste.service.impl;
 
 
-import com.lucassilvs.libteste.lib.ProducerListComponent;
 import com.lucassilvs.libteste.request.MensagemRequest;
 import com.lucassilvs.libteste.service.MensagemService;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,26 +17,13 @@ public class MessagemServiceLibStringImpl implements MensagemService {
 
     private  KafkaTemplate<String, String> kafkaTemplateMap;
 
-
-
-
     public void postarMensagem(MensagemRequest mensagem) {
-        if (kafkaTemplateMap == null) {
-            kafkaTemplateMap = ProducerListComponent.buscaProducer("producer1");
-        }
-
-
         kafkaTemplateMap.send(nomeTopicoDefault, mensagem.getMensagem());
         System.out.println("Mensagem: " + mensagem.getMensagem() + " Saldo: " + mensagem.getSaldo());
-
     }
 
     @Override
     public void postarMensagem(MensagemRequest mensagem, String nomeTopico) {
-        if (kafkaTemplateMap == null) {
-            kafkaTemplateMap = ProducerListComponent.buscaProducer("producer1");
-        }
-
 
         kafkaTemplateMap.send(nomeTopico, mensagem.getMensagem());
         System.out.println("Mensagem: " + mensagem.getMensagem() + " Saldo: " + mensagem.getSaldo());
