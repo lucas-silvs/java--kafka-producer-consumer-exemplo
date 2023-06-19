@@ -1,4 +1,4 @@
-package com.lucassilvs.libkafkaclients.clients.schema_registry;
+package com.lucassilvs.libkafkaclients.lib.schema_registry;
 
 
 import lombok.Data;

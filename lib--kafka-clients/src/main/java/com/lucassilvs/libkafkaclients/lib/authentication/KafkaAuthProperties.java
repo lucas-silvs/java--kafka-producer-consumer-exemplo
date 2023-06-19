@@ -1,4 +1,4 @@
-package com.lucassilvs.libkafkaclients.clients.authentication;
+package com.lucassilvs.libkafkaclients.lib.authentication;
 
 import jakarta.annotation.Nonnull;
 import lombok.Data;
@@ -31,8 +31,5 @@ public class KafkaAuthProperties {
     private String password;
 
 //    ------------------------------------
-
-
-
 
 }

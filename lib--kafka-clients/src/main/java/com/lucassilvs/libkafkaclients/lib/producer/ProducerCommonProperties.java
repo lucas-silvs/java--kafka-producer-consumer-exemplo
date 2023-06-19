@@ -1,15 +1,14 @@
-package com.lucassilvs.libkafkaclients.clients.producer;
+package com.lucassilvs.libkafkaclients.lib.producer;
 
-import com.lucassilvs.libkafkaclients.clients.KafkaCommonProperties;
+import com.lucassilvs.libteste.lib.KafkaCommonProperties;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@Data
 public class ProducerCommonProperties extends KafkaCommonProperties {
-
-
-
 
     private String ClientDnsLookup; //OK
     private String metadataMaxAgeMs; //OK

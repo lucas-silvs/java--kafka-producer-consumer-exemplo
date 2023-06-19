@@ -1,4 +1,4 @@
-package com.lucassilvs.libteste.lib;
+package com.lucassilvs.libkafkaclients.lib;
 
 import com.lucassilvs.libteste.lib.authentication.KafkaAuthProperties;
 import com.lucassilvs.libteste.lib.producer.ListProducerProperties;
@@ -10,18 +10,16 @@ import lombok.Data;
 import org.apache.kafka.common.config.SaslConfigs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
+import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
-@Configuration
-@Order(0)
+@Service
 @Data
 public class ProducerListComponent {
 
@@ -114,7 +112,7 @@ public class ProducerListComponent {
         return new DefaultKafkaProducerFactory<>(producerConfigs(producerCommonProperties));
     }
 
-    @Bean("listaKafkaTemplate")
+    @Bean
     public void listaKafkaTemplate() {
         Map<String, KafkaTemplate> producers = new HashMap<>();
 
