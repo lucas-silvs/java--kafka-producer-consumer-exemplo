@@ -45,7 +45,7 @@ public class KafkaProducerConfig {
             for (Field field : fields) {
                 if (field.isAnnotationPresent(KafkaProducer.class)) {
                     KafkaProducer kafkaClientAnnotation = field.getAnnotation(KafkaProducer.class);
-                    String kafkaClientName = kafkaClientAnnotation.name();
+                    String kafkaClientName = kafkaClientAnnotation.value();
                     KafkaTemplate kafkaClient = getKafkaProducerByName(kafkaClientName);
                     field.setAccessible(true);
                     try {

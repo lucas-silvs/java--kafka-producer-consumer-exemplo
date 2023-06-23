@@ -1,10 +1,9 @@
 package com.lucassilvs.libteste.service.producer.impl;
 
 
-import com.lucassilvs.libkafkaclients.KafkaClientsManager;
+import com.lucassilvs.libkafkaclients.annotation.producer.KafkaProducer;
 import com.lucassilvs.libteste.request.MensagemRequest;
 import com.lucassilvs.libteste.service.producer.MensagemService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -17,12 +16,9 @@ public class MessagemServiceLibStringImpl implements MensagemService {
     @Value("${kafka.producers.producer1.nomeTopico}")
     private String nomeTopicoDefault;
 
+    @KafkaProducer("producer1")
     private  KafkaTemplate<String, String> producerTeste;
 
-    @Autowired
-    public MessagemServiceLibStringImpl(KafkaClientsManager kafkaClientsManager) {
-        this.producerTeste = kafkaClientsManager.buscaProducer("producer1");
-    }
 
     public void postarMensagem(MensagemRequest mensagem) {
         producerTeste.send(nomeTopicoDefault, mensagem.getMensagem());

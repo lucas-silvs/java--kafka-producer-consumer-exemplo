@@ -2,10 +2,9 @@ package com.lucassilvs.libteste.service.producer.impl;
 
 
 import com.lucassilvs.kafkaproducerexemplo.gateways.kafka.UsuarioTesteAvro;
-import com.lucassilvs.libkafkaclients.KafkaClientsManager;
+import com.lucassilvs.libkafkaclients.annotation.producer.KafkaProducer;
 import com.lucassilvs.libteste.request.MensagemRequest;
 import com.lucassilvs.libteste.service.producer.MensagemService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -19,13 +18,9 @@ public class MessagemServiceLibAvroImpl implements MensagemService {
     private String nomeTopicoDefault;
 
 
+    @KafkaProducer("producer2")
     private KafkaTemplate<String, UsuarioTesteAvro> kafkaTemplateMap;
 
-    @Autowired
-    public MessagemServiceLibAvroImpl( KafkaClientsManager kafkaClientsManager){
-
-        this.kafkaTemplateMap = kafkaClientsManager.buscaProducer("producer2");
-    }
 
     public void postarMensagem(MensagemRequest mensagem) {
         UsuarioTesteAvro testeAvro = UsuarioTesteAvro.newBuilder()
