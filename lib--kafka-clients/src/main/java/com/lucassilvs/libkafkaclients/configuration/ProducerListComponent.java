@@ -9,6 +9,7 @@ import jakarta.annotation.Nonnull;
 import lombok.Data;
 import org.apache.kafka.common.config.SaslConfigs;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
@@ -26,6 +27,10 @@ public class ProducerListComponent {
     @Autowired
     private ListProducersAndConsumersProperties listProducerProperties;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
+    //TODO: implementar o append de maps para as properties de Producer
     public Map<String, Object> producerConfigs(ProducerCommonProperties producerProperties) {
         Map<String, Object> props = new HashMap<>();
 
@@ -35,7 +40,7 @@ public class ProducerListComponent {
         KafkaAuthProperties kafkaAuthProperties = producerProperties.getAuth();
         SchemaRegistryConfiguration registryConfiguration = producerProperties.getSchemaRegistry();
 
-        processFields(props, producerProperties);
+        props = processFields(props, producerProperties);
 
         if( kafkaAuthProperties != null ) {
 
@@ -89,7 +94,7 @@ public class ProducerListComponent {
                     // Tratar a exceção adequadamente
                 }
             }
-            return props;
+        return props;
     }
 
     private String convertFieldNameToConfigKey(String fieldName) {
@@ -102,15 +107,12 @@ public class ProducerListComponent {
     }
 
     @Bean("listProducers")
-    public Map<String, KafkaTemplate> listaKafkaTemplate() {
-        System.out.println("Inicializando lista de producers");
-        Map<String, KafkaTemplate> producers = new HashMap<>();
+    public void listaKafkaTemplate() {
 
         listProducerProperties.getProducers().forEach((name, producerPropertie) -> {
             KafkaTemplate<String, Object> kafkaTemplate = new KafkaTemplate<>(producerFactory(producerPropertie));
-            producers.put(name, kafkaTemplate);
+            applicationContext.getBeanFactory().registerSingleton(name, kafkaTemplate);
         });
-        return producers;
     }
 }
 

@@ -10,6 +10,7 @@ import jakarta.annotation.Nonnull;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.config.SaslConfigs;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
@@ -26,6 +27,10 @@ public class ConsumerListComponent {
     @Autowired
     private ListProducersAndConsumersProperties producersAndConsumersProperties;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
+    //TODO: implementar o append de maps para as properties de Consumer
 
     public Map<String, Object> consumerConfigs(ConsumerCommonProperties consumerCommonProperties) {
         Map<String, Object> props = new HashMap<>();
@@ -33,12 +38,14 @@ public class ConsumerListComponent {
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, consumerCommonProperties.getBootstrapServers());
         props.put(ConsumerConfig.CLIENT_ID_CONFIG, consumerCommonProperties.getClientId());
 
+        props = processFields(props, consumerCommonProperties);
+
+
         KafkaAuthProperties kafkaAuthProperties = consumerCommonProperties.getAuth();
         SchemaRegistryConfiguration registryConfiguration = consumerCommonProperties.getSchemaRegistry();
 
-        processFields(props, consumerCommonProperties);
 
-        if( kafkaAuthProperties != null ) {
+        if (kafkaAuthProperties != null) {
 
             switch (kafkaAuthProperties.getSaslMechanism()) {
                 case "OAUTHBEARER":
@@ -102,16 +109,12 @@ public class ConsumerListComponent {
     }
 
     @Bean("listConsumers")
-    public Map<String, ConcurrentKafkaListenerContainerFactory<String, Object>> listaKafkaTemplate() {
-        System.out.println("Inicializando consumers");
-        Map<String, ConcurrentKafkaListenerContainerFactory<String, Object>> consumers = new HashMap<>();
+    public void listaKafkaTemplate() {
 
         producersAndConsumersProperties.getConsumers().forEach((name, consumerProperties) -> {
             ConcurrentKafkaListenerContainerFactory<String, Object> factory = new ConcurrentKafkaListenerContainerFactory<>();
             factory.setConsumerFactory(producerFactory(consumerProperties));
-            consumers.put(name, factory);
+            applicationContext.getBeanFactory().registerSingleton(name, factory);
         });
-        return consumers;
     }
-
 }

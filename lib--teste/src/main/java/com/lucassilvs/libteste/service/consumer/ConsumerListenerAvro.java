@@ -11,7 +11,7 @@ public class ConsumerListenerAvro {
 
     @KafkaListener(
             topics = "${kafka.consumers.consumer2.nomeTopico}",
-            containerFactory = "containerFactoryConsumer2",
+            containerFactory = "consumer2",
             groupId = "${kafka.consumers.consumer2.groupId}"
     )
     public void consumirMensagem1(ConsumerRecord<String, Object> mensagem) {
