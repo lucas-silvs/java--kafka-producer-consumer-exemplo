@@ -16,7 +16,7 @@ public class MessagemServiceLibStringImpl implements MensagemService {
     @Value("${kafka.producers.producer1.nomeTopico}")
     private String nomeTopicoDefault;
 
-
+    @Autowired
     private  KafkaTemplate<String, String> producer1;
 
     @Autowired

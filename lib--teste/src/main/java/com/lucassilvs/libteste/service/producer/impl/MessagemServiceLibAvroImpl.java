@@ -18,6 +18,7 @@ public class MessagemServiceLibAvroImpl implements MensagemService {
     private String nomeTopicoDefault;
 
 
+    @Autowired
     private KafkaTemplate<String, UsuarioTesteAvro> producer2;
 
     @Autowired

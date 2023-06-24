@@ -6,12 +6,11 @@ import com.lucassilvs.libkafkaclients.properties.producer.ProducerCommonProperti
 import com.lucassilvs.libkafkaclients.properties.schema_registry.SchemaRegistryConfiguration;
 import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig;
 import jakarta.annotation.Nonnull;
-import lombok.Data;
 import org.apache.kafka.common.config.SaslConfigs;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
@@ -21,14 +20,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-@Data
+@Order(0)
 public class ProducerListComponent {
 
     @Autowired
     private ListProducersAndConsumersProperties listProducerProperties;
 
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
+
 
     //TODO: implementar o append de maps para as properties de Producer
     public Map<String, Object> producerConfigs(ProducerCommonProperties producerProperties) {
@@ -107,12 +105,16 @@ public class ProducerListComponent {
     }
 
     @Bean("listProducers")
-    public void listaKafkaTemplate() {
+    public Map<String, Object> listaKafkaTemplate() {
+
+        Map<String, Object> kafkaTemplates = new HashMap<>();
 
         listProducerProperties.getProducers().forEach((name, producerPropertie) -> {
             KafkaTemplate<String, Object> kafkaTemplate = new KafkaTemplate<>(producerFactory(producerPropertie));
-            applicationContext.getBeanFactory().registerSingleton(name, kafkaTemplate);
+            kafkaTemplates.put(name, kafkaTemplate);
         });
+
+        return kafkaTemplates;
     }
 }
 

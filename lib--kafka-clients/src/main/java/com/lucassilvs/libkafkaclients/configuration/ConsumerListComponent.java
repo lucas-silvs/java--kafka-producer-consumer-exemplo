@@ -10,9 +10,9 @@ import jakarta.annotation.Nonnull;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.config.SaslConfigs;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
@@ -22,13 +22,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
+@Order(0)
 public class ConsumerListComponent {
 
     @Autowired
     private ListProducersAndConsumersProperties producersAndConsumersProperties;
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
 
     //TODO: implementar o append de maps para as properties de Consumer
 
@@ -38,8 +36,9 @@ public class ConsumerListComponent {
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, consumerCommonProperties.getBootstrapServers());
         props.put(ConsumerConfig.CLIENT_ID_CONFIG, consumerCommonProperties.getClientId());
 
-        props = processFields(props, consumerCommonProperties);
+        Map<String, Object> propertieMap = processFields(consumerCommonProperties);
 
+        props.putAll(propertieMap);
 
         KafkaAuthProperties kafkaAuthProperties = consumerCommonProperties.getAuth();
         SchemaRegistryConfiguration registryConfiguration = consumerCommonProperties.getSchemaRegistry();
@@ -82,21 +81,22 @@ public class ConsumerListComponent {
         return props;
     }
 
-    private Map<String, Object> processFields(Map<String, Object> props, ConsumerCommonProperties kafkaProperties) {
+    private Map<String, Object> processFields(ConsumerCommonProperties kafkaProperties) {
         Field[] fields = ConsumerCommonProperties.class.getDeclaredFields();
+        Map<String,Object> propstemp = new HashMap<>();
         for (Field field : fields) {
             field.setAccessible(true);
             try {
                 Object value = field.get(kafkaProperties);
                 if (value != null || field.isAnnotationPresent(Nonnull.class)) {
                     String configKey = convertFieldNameToConfigKey(field.getName());
-                    props.put(configKey, value);
+                    propstemp.put(configKey, value);
                 }
             } catch (IllegalAccessException e) {
                 throw new RuntimeException("Ocorreu um erro ao processar as configurações do Kafka ao criar os consumers", e);
             }
         }
-        return props;
+        return propstemp;
     }
 
     private String convertFieldNameToConfigKey(String fieldName) {
@@ -109,12 +109,13 @@ public class ConsumerListComponent {
     }
 
     @Bean("listConsumers")
-    public void listaKafkaTemplate() {
-
+    public Map<String, ConcurrentKafkaListenerContainerFactory> listaKafkaTemplate() {
+        Map<String, ConcurrentKafkaListenerContainerFactory> map = new HashMap<>();
         producersAndConsumersProperties.getConsumers().forEach((name, consumerProperties) -> {
             ConcurrentKafkaListenerContainerFactory<String, Object> factory = new ConcurrentKafkaListenerContainerFactory<>();
             factory.setConsumerFactory(producerFactory(consumerProperties));
-            applicationContext.getBeanFactory().registerSingleton(name, factory);
+            map.put(name, factory);
         });
+        return map;
     }
 }
