@@ -26,13 +26,13 @@ public class MessagemServiceLibStringImpl implements MensagemService {
 
     public void postarMensagem(MensagemRequest mensagem) {
         producer1.send(nomeTopicoDefault, mensagem.getMensagem());
-        System.out.println("Mensagem: " + mensagem.getMensagem() + " Saldo: " + mensagem.getSaldo());
+        System.out.println("PRODUCER - Mensagem: " + mensagem.getMensagem() + " Saldo: " + mensagem.getSaldo());
     }
 
     @Override
     public void postarMensagem(MensagemRequest mensagem, String nomeTopico) {
 
         producer1.send(nomeTopico, mensagem.getMensagem());
-        System.out.println("Mensagem: " + mensagem.getMensagem() + " Saldo: " + mensagem.getSaldo());
+        System.out.println("PRODUCER - Mensagem: " + mensagem.getMensagem() + " Saldo: " + mensagem.getSaldo());
     }
 }

@@ -10,7 +10,6 @@ import org.apache.kafka.common.config.SaslConfigs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
@@ -20,13 +19,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-@Order(0)
 public class ProducerListComponent {
 
     @Autowired
     private ListProducersAndConsumersProperties listProducerProperties;
-
-
 
     //TODO: implementar o append de maps para as properties de Producer
     public Map<String, Object> producerConfigs(ProducerCommonProperties producerProperties) {
@@ -64,7 +60,6 @@ public class ProducerListComponent {
                     break;
             }
         }
-
         // configurações do schema registry
         if (registryConfiguration != null) {
             props.put(AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, registryConfiguration.getUrl());
@@ -73,7 +68,6 @@ public class ProducerListComponent {
                 props.put(AbstractKafkaSchemaSerDeConfig.BASIC_AUTH_CREDENTIALS_SOURCE, "USER_INFO");
             }
         }
-
         return props;
     }
 
@@ -105,15 +99,12 @@ public class ProducerListComponent {
     }
 
     @Bean("listProducers")
-    public Map<String, Object> listaKafkaTemplate() {
-
-        Map<String, Object> kafkaTemplates = new HashMap<>();
-
+    public Map<String, KafkaTemplate> listaKafkaTemplate() {
+        Map<String, KafkaTemplate> kafkaTemplates = new HashMap<>();
         listProducerProperties.getProducers().forEach((name, producerPropertie) -> {
-            KafkaTemplate<String, Object> kafkaTemplate = new KafkaTemplate<>(producerFactory(producerPropertie));
+            KafkaTemplate<String, KafkaTemplate> kafkaTemplate = new KafkaTemplate<>(producerFactory(producerPropertie));
             kafkaTemplates.put(name, kafkaTemplate);
         });
-
         return kafkaTemplates;
     }
 }

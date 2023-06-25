@@ -1,2 +1,7 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration= \
-com.lucassilvs.libkafkaclients.KafkaClientsManager
+com.lucassilvs.libkafkaclients.KafkaClientsManager, \
+com.lucassilvs.libkafkaclients.configuration.ConsumerListComponent, \
+com.lucassilvs.libkafkaclients.configuration.ProducerListComponent, \
+com.lucassilvs.libkafkaclients.properties.ListProducersAndConsumersProperties, \
+com.lucassilvs.libkafkaclients.properties.ProducerProperties, \
+com.lucassilvs.libkafkaclients.properties.ConsumerProperties

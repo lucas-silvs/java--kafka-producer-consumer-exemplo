@@ -12,7 +12,6 @@ import org.apache.kafka.common.config.SaslConfigs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
@@ -22,7 +21,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-@Order(0)
 public class ConsumerListComponent {
 
     @Autowired
@@ -104,7 +102,7 @@ public class ConsumerListComponent {
         return String.join(".", parts).toLowerCase();
     }
 
-    public ConsumerFactory producerFactory(ConsumerCommonProperties consumerCommonProperties) {
+    public ConsumerFactory consumerFactory(ConsumerCommonProperties consumerCommonProperties) {
         return new DefaultKafkaConsumerFactory(consumerConfigs(consumerCommonProperties));
     }
 
@@ -113,7 +111,7 @@ public class ConsumerListComponent {
         Map<String, ConcurrentKafkaListenerContainerFactory> map = new HashMap<>();
         producersAndConsumersProperties.getConsumers().forEach((name, consumerProperties) -> {
             ConcurrentKafkaListenerContainerFactory<String, Object> factory = new ConcurrentKafkaListenerContainerFactory<>();
-            factory.setConsumerFactory(producerFactory(consumerProperties));
+            factory.setConsumerFactory(consumerFactory(consumerProperties));
             map.put(name, factory);
         });
         return map;

@@ -34,7 +34,7 @@ public class MessagemServiceLibAvroImpl implements MensagemService {
                 .build();
 
         producer2.send(nomeTopicoDefault, testeAvro);
-        System.out.println("Mensagem: " + mensagem.getMensagem() + " Saldo: " + mensagem.getSaldo());
+        System.out.println("PRODUCER - Mensagem:" + mensagem.getMensagem() + " Saldo: " + mensagem.getSaldo());
 
     }
 
@@ -45,6 +45,7 @@ public class MessagemServiceLibAvroImpl implements MensagemService {
                 .setSaldo(mensagem.getSaldo())
                 .build();
 
+        System.out.println("PRODUCER - Mensagem:" + mensagem.getMensagem() + " Saldo: " + mensagem.getSaldo());
         producer2.send(nomeTopico, testeAvro);
     }
 }

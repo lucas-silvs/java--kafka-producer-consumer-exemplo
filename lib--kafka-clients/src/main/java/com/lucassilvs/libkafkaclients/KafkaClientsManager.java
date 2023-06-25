@@ -1,7 +1,5 @@
 package com.lucassilvs.libkafkaclients;
 
-
-import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -12,27 +10,26 @@ import org.springframework.kafka.core.KafkaTemplate;
 import java.util.Map;
 
 @Configuration
-public class KafkaClientsManager  implements SmartInitializingSingleton {
+public class KafkaClientsManager {
 
     private final Map<String, KafkaTemplate> listaProducers;
-    private final Map<String, ConcurrentKafkaListenerContainerFactory<String, Object>> listaConsumers;
+    private final Map<String, ConcurrentKafkaListenerContainerFactory> listaConsumers;
+    private final ConfigurableApplicationContext applicationContext;
 
 
     @Autowired
-    private ConfigurableApplicationContext applicationContext;
     public KafkaClientsManager(@Qualifier("listProducers") Map<String, KafkaTemplate> listaProducers,
-                               @Qualifier("listConsumers") Map<String, ConcurrentKafkaListenerContainerFactory<String, Object>> listaConsumers) {
+                               @Qualifier("listConsumers") Map<String, ConcurrentKafkaListenerContainerFactory> listaConsumers,
+                               ConfigurableApplicationContext applicationContext) {
         this.listaProducers = listaProducers;
         this.listaConsumers = listaConsumers;
-    }
+        this.applicationContext = applicationContext;
 
-    @Override
-    public void afterSingletonsInstantiated() {
         listaConsumers.forEach((nomeConsumer, consumer) -> {
-            applicationContext.getBeanFactory().registerSingleton(nomeConsumer, consumer);
+            this.applicationContext.getBeanFactory().registerSingleton(nomeConsumer, consumer);
         });
         listaProducers.forEach((nomeProducer, producer) -> {
-            applicationContext.getBeanFactory().registerSingleton(nomeProducer, producer);
+            this.applicationContext.getBeanFactory().registerSingleton(nomeProducer, producer);
         });
     }
 }
