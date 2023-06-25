@@ -24,7 +24,6 @@ public class ProducerListComponent {
     @Autowired
     private ListProducersAndConsumersProperties listProducerProperties;
 
-    //TODO: implementar o append de maps para as properties de Producer
     public Map<String, Object> producerConfigs(ProducerCommonProperties producerProperties) {
         Map<String, Object> props = new HashMap<>();
 

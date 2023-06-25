@@ -26,8 +26,6 @@ public class ConsumerListComponent {
     @Autowired
     private ListProducersAndConsumersProperties producersAndConsumersProperties;
 
-    //TODO: implementar o append de maps para as properties de Consumer
-
     public Map<String, Object> consumerConfigs(ConsumerCommonProperties consumerCommonProperties) {
         Map<String, Object> props = new HashMap<>();
 
