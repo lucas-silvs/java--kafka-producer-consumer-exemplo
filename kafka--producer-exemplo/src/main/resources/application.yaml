@@ -4,10 +4,10 @@ server:
 spring:
   kafka:
     producer:
-      ack: 0
-      number-of-tries: 0
-      imdepotence: false
-      timeout: 1000
+      acks: 0
+      retries: 0
+      enable.imdepotence: true
+      request.timeout.ms: 1000
   application:
     name: java--kafka-producer-exemplo
 

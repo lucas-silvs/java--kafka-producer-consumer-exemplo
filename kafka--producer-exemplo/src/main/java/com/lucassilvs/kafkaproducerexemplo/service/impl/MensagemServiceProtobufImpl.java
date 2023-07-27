@@ -22,7 +22,7 @@ public class MensagemServiceProtobufImpl implements MensagemService {
 
     public void postarMensagem(MensagemRequest mensagem) {
         UsuarioTesteProto.mensagem usuarioTesteProto = UsuarioTesteProto.mensagem.newBuilder()
-                        .setNome("teste").build();
+                        .setNome(mensagem.getMensagem()).build();
         kafkaPostUtils.postarMensagem(usuarioTesteProto , nomeTopico);
     }
 
