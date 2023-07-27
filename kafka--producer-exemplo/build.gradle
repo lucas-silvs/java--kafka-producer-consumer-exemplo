@@ -3,6 +3,7 @@ plugins {
 	id 'org.springframework.boot' version '3.0.1'
 	id 'io.spring.dependency-management' version '1.1.0'
 	id "com.github.davidmc24.gradle.plugin.avro" version "1.5.0"
+	id "com.google.protobuf" version "0.9.4"
 }
 
 group = 'com.lucassilvs'
@@ -32,7 +33,8 @@ dependencies {
 	// https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
 	implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.2'
 
-
+	// https://mvnrepository.com/artifact/io.confluent/kafka-protobuf-serializer
+	implementation 'io.confluent:kafka-protobuf-serializer:7.4.0'
 
 }
 
