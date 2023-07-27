@@ -7,7 +7,6 @@ import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 @ComponentScan(value = "com.lucassilvs")
-
 @EnableConfigurationProperties
 public class LibTesteApplication {
 

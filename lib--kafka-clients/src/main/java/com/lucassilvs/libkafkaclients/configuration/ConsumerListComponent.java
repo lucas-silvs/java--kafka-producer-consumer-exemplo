@@ -26,19 +26,21 @@ public class ConsumerListComponent {
     @Autowired
     private ListProducersAndConsumersProperties producersAndConsumersProperties;
 
-
     public Map<String, Object> consumerConfigs(ConsumerCommonProperties consumerCommonProperties) {
         Map<String, Object> props = new HashMap<>();
 
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, consumerCommonProperties.getBootstrapServers());
         props.put(ConsumerConfig.CLIENT_ID_CONFIG, consumerCommonProperties.getClientId());
 
+        Map<String, Object> propertieMap = processFields(consumerCommonProperties);
+
+        props.putAll(propertieMap);
+
         KafkaAuthProperties kafkaAuthProperties = consumerCommonProperties.getAuth();
         SchemaRegistryConfiguration registryConfiguration = consumerCommonProperties.getSchemaRegistry();
 
-        processFields(props, consumerCommonProperties);
 
-        if( kafkaAuthProperties != null ) {
+        if (kafkaAuthProperties != null) {
 
             switch (kafkaAuthProperties.getSaslMechanism()) {
                 case "OAUTHBEARER":
@@ -75,21 +77,22 @@ public class ConsumerListComponent {
         return props;
     }
 
-    private Map<String, Object> processFields(Map<String, Object> props, ConsumerCommonProperties kafkaProperties) {
+    private Map<String, Object> processFields(ConsumerCommonProperties kafkaProperties) {
         Field[] fields = ConsumerCommonProperties.class.getDeclaredFields();
+        Map<String,Object> propstemp = new HashMap<>();
         for (Field field : fields) {
             field.setAccessible(true);
             try {
                 Object value = field.get(kafkaProperties);
                 if (value != null || field.isAnnotationPresent(Nonnull.class)) {
                     String configKey = convertFieldNameToConfigKey(field.getName());
-                    props.put(configKey, value);
+                    propstemp.put(configKey, value);
                 }
             } catch (IllegalAccessException e) {
                 throw new RuntimeException("Ocorreu um erro ao processar as configurações do Kafka ao criar os consumers", e);
             }
         }
-        return props;
+        return propstemp;
     }
 
     private String convertFieldNameToConfigKey(String fieldName) {
@@ -97,21 +100,18 @@ public class ConsumerListComponent {
         return String.join(".", parts).toLowerCase();
     }
 
-    public ConsumerFactory producerFactory(ConsumerCommonProperties consumerCommonProperties) {
+    public ConsumerFactory consumerFactory(ConsumerCommonProperties consumerCommonProperties) {
         return new DefaultKafkaConsumerFactory(consumerConfigs(consumerCommonProperties));
     }
 
     @Bean("listConsumers")
-    public Map<String, ConcurrentKafkaListenerContainerFactory<String, Object>> listaKafkaTemplate() {
-        System.out.println("Inicializando consumers");
-        Map<String, ConcurrentKafkaListenerContainerFactory<String, Object>> consumers = new HashMap<>();
-
+    public Map<String, ConcurrentKafkaListenerContainerFactory> listaKafkaTemplate() {
+        Map<String, ConcurrentKafkaListenerContainerFactory> map = new HashMap<>();
         producersAndConsumersProperties.getConsumers().forEach((name, consumerProperties) -> {
             ConcurrentKafkaListenerContainerFactory<String, Object> factory = new ConcurrentKafkaListenerContainerFactory<>();
-            factory.setConsumerFactory(producerFactory(consumerProperties));
-            consumers.put(name, factory);
+            factory.setConsumerFactory(consumerFactory(consumerProperties));
+            map.put(name, factory);
         });
-        return consumers;
+        return map;
     }
-
 }

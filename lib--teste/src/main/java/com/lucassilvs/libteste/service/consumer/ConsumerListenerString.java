@@ -7,11 +7,11 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Profile("string")
-public class ConsumerListenerString {
+public class ConsumerListenerString  {
 
     @KafkaListener(
             topics = "${kafka.consumers.consumer1.nomeTopico}",
-            containerFactory = "containerFactoryConsumer1",
+            containerFactory = "consumer1",
             groupId = "${kafka.consumers.consumer1.groupId}"
     )
     public void consumirMensagem1(ConsumerRecord<String, String> mensagem) {

@@ -2,7 +2,6 @@ package com.lucassilvs.libteste.service.producer.impl;
 
 
 import com.lucassilvs.kafkaproducerexemplo.gateways.kafka.UsuarioTesteAvro;
-import com.lucassilvs.libkafkaclients.KafkaClientsManager;
 import com.lucassilvs.libteste.request.MensagemRequest;
 import com.lucassilvs.libteste.service.producer.MensagemService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +18,12 @@ public class MessagemServiceLibAvroImpl implements MensagemService {
     private String nomeTopicoDefault;
 
 
-    private KafkaTemplate<String, UsuarioTesteAvro> kafkaTemplateMap;
+    @Autowired
+    private KafkaTemplate<String, UsuarioTesteAvro> producer2;
 
     @Autowired
-    public MessagemServiceLibAvroImpl( KafkaClientsManager kafkaClientsManager){
-
-        this.kafkaTemplateMap = kafkaClientsManager.buscaProducer("producer2");
+    public MessagemServiceLibAvroImpl(KafkaTemplate<String, UsuarioTesteAvro> producer2) {
+        this.producer2 = producer2;
     }
 
     public void postarMensagem(MensagemRequest mensagem) {
@@ -34,8 +33,8 @@ public class MessagemServiceLibAvroImpl implements MensagemService {
                 .setSaldo(mensagem.getSaldo())
                 .build();
 
-        kafkaTemplateMap.send(nomeTopicoDefault, testeAvro);
-        System.out.println("Mensagem: " + mensagem.getMensagem() + " Saldo: " + mensagem.getSaldo());
+        producer2.send(nomeTopicoDefault, testeAvro);
+        System.out.println("PRODUCER - Mensagem:" + mensagem.getMensagem() + " Saldo: " + mensagem.getSaldo());
 
     }
 
@@ -46,6 +45,7 @@ public class MessagemServiceLibAvroImpl implements MensagemService {
                 .setSaldo(mensagem.getSaldo())
                 .build();
 
-        kafkaTemplateMap.send(nomeTopico, testeAvro);
+        System.out.println("PRODUCER - Mensagem:" + mensagem.getMensagem() + " Saldo: " + mensagem.getSaldo());
+        producer2.send(nomeTopico, testeAvro);
     }
 }

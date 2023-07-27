@@ -3,6 +3,7 @@ server:
 
 kafka:
   producers:
+
     producer1:
       nomeTopico: topico--teste
       keySerializer: org.apache.kafka.common.serialization.StringSerializer

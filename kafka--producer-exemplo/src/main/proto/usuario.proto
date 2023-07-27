@@ -1,0 +1,7 @@
+syntax = "proto3";
+package io.confluent.cloud.demo.domain;
+option java_outer_classname = "UsuarioTesteProto";
+
+message mensagem {
+  string nome = 1;
+}

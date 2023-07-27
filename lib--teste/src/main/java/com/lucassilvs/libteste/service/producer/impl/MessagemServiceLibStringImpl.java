@@ -1,7 +1,6 @@
 package com.lucassilvs.libteste.service.producer.impl;
 
 
-import com.lucassilvs.libkafkaclients.KafkaClientsManager;
 import com.lucassilvs.libteste.request.MensagemRequest;
 import com.lucassilvs.libteste.service.producer.MensagemService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,22 +16,23 @@ public class MessagemServiceLibStringImpl implements MensagemService {
     @Value("${kafka.producers.producer1.nomeTopico}")
     private String nomeTopicoDefault;
 
-    private  KafkaTemplate<String, String> producerTeste;
+    @Autowired
+    private  KafkaTemplate<String, String> producer1;
 
     @Autowired
-    public MessagemServiceLibStringImpl(KafkaClientsManager kafkaClientsManager) {
-        this.producerTeste = kafkaClientsManager.buscaProducer("producer1");
+    public MessagemServiceLibStringImpl(KafkaTemplate<String, String> producer1) {
+        this.producer1 = producer1;
     }
 
     public void postarMensagem(MensagemRequest mensagem) {
-        producerTeste.send(nomeTopicoDefault, mensagem.getMensagem());
-        System.out.println("Mensagem: " + mensagem.getMensagem() + " Saldo: " + mensagem.getSaldo());
+        producer1.send(nomeTopicoDefault, mensagem.getMensagem());
+        System.out.println("PRODUCER - Mensagem: " + mensagem.getMensagem() + " Saldo: " + mensagem.getSaldo());
     }
 
     @Override
     public void postarMensagem(MensagemRequest mensagem, String nomeTopico) {
 
-        producerTeste.send(nomeTopico, mensagem.getMensagem());
-        System.out.println("Mensagem: " + mensagem.getMensagem() + " Saldo: " + mensagem.getSaldo());
+        producer1.send(nomeTopico, mensagem.getMensagem());
+        System.out.println("PRODUCER - Mensagem: " + mensagem.getMensagem() + " Saldo: " + mensagem.getSaldo());
     }
 }

@@ -1,3 +1,10 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        mavenLocal()
+    }
+}
+
 rootProject.name = 'java--kafka-producer-consumer-exemplo'
 
 include ':kafka--consumer-exemplo',

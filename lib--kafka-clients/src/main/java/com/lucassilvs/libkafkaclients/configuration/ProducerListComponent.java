@@ -6,7 +6,6 @@ import com.lucassilvs.libkafkaclients.properties.producer.ProducerCommonProperti
 import com.lucassilvs.libkafkaclients.properties.schema_registry.SchemaRegistryConfiguration;
 import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig;
 import jakarta.annotation.Nonnull;
-import lombok.Data;
 import org.apache.kafka.common.config.SaslConfigs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -20,7 +19,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-@Data
 public class ProducerListComponent {
 
     @Autowired
@@ -35,7 +33,7 @@ public class ProducerListComponent {
         KafkaAuthProperties kafkaAuthProperties = producerProperties.getAuth();
         SchemaRegistryConfiguration registryConfiguration = producerProperties.getSchemaRegistry();
 
-        processFields(props, producerProperties);
+        props = processFields(props, producerProperties);
 
         if( kafkaAuthProperties != null ) {
 
@@ -61,7 +59,6 @@ public class ProducerListComponent {
                     break;
             }
         }
-
         // configurações do schema registry
         if (registryConfiguration != null) {
             props.put(AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, registryConfiguration.getUrl());
@@ -70,7 +67,6 @@ public class ProducerListComponent {
                 props.put(AbstractKafkaSchemaSerDeConfig.BASIC_AUTH_CREDENTIALS_SOURCE, "USER_INFO");
             }
         }
-
         return props;
     }
 
@@ -89,7 +85,7 @@ public class ProducerListComponent {
                     // Tratar a exceção adequadamente
                 }
             }
-            return props;
+        return props;
     }
 
     private String convertFieldNameToConfigKey(String fieldName) {
@@ -103,14 +99,12 @@ public class ProducerListComponent {
 
     @Bean("listProducers")
     public Map<String, KafkaTemplate> listaKafkaTemplate() {
-        System.out.println("Inicializando lista de producers");
-        Map<String, KafkaTemplate> producers = new HashMap<>();
-
+        Map<String, KafkaTemplate> kafkaTemplates = new HashMap<>();
         listProducerProperties.getProducers().forEach((name, producerPropertie) -> {
-            KafkaTemplate<String, Object> kafkaTemplate = new KafkaTemplate<>(producerFactory(producerPropertie));
-            producers.put(name, kafkaTemplate);
+            KafkaTemplate<String, KafkaTemplate> kafkaTemplate = new KafkaTemplate<>(producerFactory(producerPropertie));
+            kafkaTemplates.put(name, kafkaTemplate);
         });
-        return producers;
+        return kafkaTemplates;
     }
 }
 
