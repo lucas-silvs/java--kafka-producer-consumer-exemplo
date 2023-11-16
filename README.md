@@ -67,6 +67,17 @@ kafka-reassign-partitions.sh --zookeeper <YOUR_ZOOKEEPER> --verify --reassignmen
 
 Com isso será criado o Broker Kafka, Zookeper, Schema Registry e o Kafka UI da Confluent, onde o gerenciamento será realizado pela interface e pode ser acessado acessando a url [Control Center](http://localhost:9021/).
 
+
+## Mirror Maker 2
+
+É possivel usar o Mirror Maker para replicar a mensagem de tópicos Kafka entre clusters diferentes, para isso será necessário executar o  seguinte comando abaixo:
+
+``` sh
+./kafka-mirror-maker.sh --consumer.config ../../cluster-source.properties --producer.config ../../cluster-target.properties --whitelist "<nome-do-tópico"
+```
+
+
+
 ## Referencias
 
 - [Docker](https://www.docker.com/)
