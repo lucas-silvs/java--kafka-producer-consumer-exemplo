@@ -67,6 +67,40 @@ kafka-reassign-partitions.sh --zookeeper <YOUR_ZOOKEEPER> --verify --reassignmen
 
 Com isso será criado o Broker Kafka, Zookeper, Schema Registry e o Kafka UI da Confluent, onde o gerenciamento será realizado pela interface e pode ser acessado acessando a url [Control Center](http://localhost:9021/).
 
+
+## Mirror Maker 2
+
+É possivel usar o Mirror Maker para replicar a mensagem de tópicos Kafka entre clusters diferentes, para isso será necessário executar o  seguinte comando abaixo:
+
+``` sh
+./kafka-mirror-maker.sh --consumer.config ../../cluster-source.properties --producer.config ../../cluster-target.properties --whitelist "<nome-do-tópico"
+```
+
+
+## Kafka Confluent Replicator
+Também é possivel utilizar o Kafka Confluent Replicator para replicar a mensagem de tópicos Kafka entre clusters diferentes, para isso será necessário executar o  seguinte comando abaixo:
+
+``` sh
+curl --location 'http://localhost:8083/connectors' \
+--header 'Content-Type: application/json' \
+--data '{
+  "name": "replicator-teste",
+  "config": {
+    "connector.class": "io.confluent.connect.replicator.ReplicatorSourceConnector",
+    "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+    "value.converter": "org.apache.kafka.connect.storage.StringConverter",
+    "src.kafka.bootstrap.servers": "kafka2:9092",
+    "dest.kafka.bootstrap.servers": "kafka3:9092",
+    "topic.whitelist": "<nome-do-topico>",
+    "confluent.topic.replication.factor": 1,
+    "provenance.header.enable": true
+  }
+}
+'
+```
+
+Com isso será criado o conector no servidor do kafka connect que está no Docker.
+
 ## Referencias
 
 - [Docker](https://www.docker.com/)
