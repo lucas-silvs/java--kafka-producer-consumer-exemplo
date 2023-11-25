@@ -1,7 +1,10 @@
 package com.lucassilvs.kafkaproducerexemplo.config.kafka;
 
+import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.config.SaslConfigs;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -16,43 +19,35 @@ import java.util.Map;
 @Configuration
 public class ProducerConfigString {
 
-    @Value("${spring.kafka.bootstrap-servers}")
-    private String bootstrapServers;
+    private final String PLAIN_JAAS_CONFIG = "org.apache.kafka.common.security.plain.PlainLoginModule required username=\"%s\" password=\"%s\";";
+    private Map<String, Object> producerConfigs(KafkaProperties kafkaProperties, String username, String password, String clientId) {
+        Map<String, Object> props = kafkaProperties.buildProducerProperties();
 
-    @Value("${spring.kafka.producer.ack}")
-    private String acknowledgement;
+        props.put(SaslConfigs.SASL_JAAS_CONFIG, String.format(PLAIN_JAAS_CONFIG, username, password));
 
-    @Value("${spring.kafka.producer.number-of-tries}")
-    private Integer numberOfTries;
-
-    @Value("${spring.kafka.producer.imdepotence}")
-    private boolean imdepotence;
-
-    @Value("${spring.kafka.producer.timeout}")
-    private Integer timeOut;
-
-
-    @Bean
-    public Map<String, Object> producerConfigs() {
-        Map<String, Object> props = new HashMap<>();
-        props.put(org.apache.kafka.clients.producer.ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-        props.put(org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        props.put(org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        props.put(org.apache.kafka.clients.producer.ProducerConfig.ACKS_CONFIG, acknowledgement);
-        props.put(org.apache.kafka.clients.producer.ProducerConfig.RETRIES_CONFIG, numberOfTries);
-        props.put(org.apache.kafka.clients.producer.ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG, timeOut);
-        props.put(org.apache.kafka.clients.producer.ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, imdepotence);
+        props.put(ProducerConfig.CLIENT_ID_CONFIG, clientId);
         return props;
     }
 
+    private ProducerFactory<String, String> producerFactory(KafkaProperties kafkaProperties, String username, String password, String clientId) {
+        return new DefaultKafkaProducerFactory<>(producerConfigs(kafkaProperties, username, password, clientId));
+    }
+
+
     @Bean
-    public ProducerFactory<String, String> producerFactory() {
-        return new DefaultKafkaProducerFactory<>(producerConfigs());
+    public KafkaTemplate<String, String> kafkaTemplate(final KafkaProperties kafkaProperties) {
+        ProducerFactory<String, String> producerFactory = producerFactory(kafkaProperties, "producer", "producer-secret", "producer1");
+
+        producerFactory.createProducer();
+        return new KafkaTemplate<>(producerFactory);
     }
 
     @Bean
-    public KafkaTemplate<String, String> kafkaTemplate() {
-        return new KafkaTemplate<>(producerFactory());
+    public KafkaTemplate<String, String> kafkaTemplateTopico2(final KafkaProperties kafkaProperties) {
+        ProducerFactory<String, String> producerFactory = producerFactory(kafkaProperties, "producer2", "teste", "producer2");
+
+        producerFactory.createProducer();
+        return new KafkaTemplate<>(producerFactory);
     }
 
 

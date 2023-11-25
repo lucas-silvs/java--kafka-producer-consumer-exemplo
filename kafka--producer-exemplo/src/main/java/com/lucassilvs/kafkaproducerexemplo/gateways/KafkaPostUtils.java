@@ -15,13 +15,19 @@ public class KafkaPostUtils {
     @Autowired
     private final KafkaTemplate kafkaTemplate;
 
-    public KafkaPostUtils(KafkaTemplate kafkaTemplate) {
+    private final KafkaTemplate kafkaTemplateTopico2;
+
+    public KafkaPostUtils(KafkaTemplate kafkaTemplate, KafkaTemplate kafkaTemplateTopico2) {
         this.kafkaTemplate = kafkaTemplate;
+        this.kafkaTemplateTopico2 = kafkaTemplateTopico2;
     }
 
     public void postarMensagem(Object mensagem, String nomeTopico){
         logger.info("Postando mensagem: " + mensagem + " no tópico " + nomeTopico);
         kafkaTemplate.send(nomeTopico, mensagem);
+
+        kafkaTemplateTopico2.send("topico-teste-2", mensagem);
+
         logger.info("mensagem enviada com sucesso");
     }
 }
