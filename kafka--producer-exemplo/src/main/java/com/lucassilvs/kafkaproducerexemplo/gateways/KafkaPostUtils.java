@@ -1,18 +1,17 @@
 package com.lucassilvs.kafkaproducerexemplo.gateways;
 
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
-import java.util.logging.Logger;
 
 @Component
 public class KafkaPostUtils {
 
-    private Logger logger = Logger.getLogger(this.getClass().getName());
+    private Logger logger = LoggerFactory.getLogger(KafkaPostUtils.class);
 
-    @Autowired
     private final KafkaTemplate kafkaTemplate;
 
     private final KafkaTemplate kafkaTemplateTopico2;
@@ -23,7 +22,7 @@ public class KafkaPostUtils {
     }
 
     public void postarMensagem(Object mensagem, String nomeTopico){
-        logger.info("Postando mensagem: " + mensagem + " no tópico " + nomeTopico);
+        logger.info("Postando mensagem: {} no tópico {}", mensagem, nomeTopico);
         kafkaTemplate.send(nomeTopico, mensagem);
 
         kafkaTemplateTopico2.send("topico-teste-2", mensagem);
