@@ -29,6 +29,13 @@ public class ProducerConfigString {
         return props;
     }
 
+    private Map<String, Object> producerConfigs(KafkaProperties kafkaProperties, String clientId) {
+        Map<String, Object> props = kafkaProperties.buildProducerProperties();
+
+        props.put(ProducerConfig.CLIENT_ID_CONFIG, clientId);
+        return props;
+    }
+
     private ProducerFactory<String, String> producerFactory(KafkaProperties kafkaProperties, String username, String password, String clientId) {
         return new DefaultKafkaProducerFactory<>(producerConfigs(kafkaProperties, username, password, clientId));
     }

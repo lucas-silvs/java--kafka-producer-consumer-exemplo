@@ -33,8 +33,6 @@ dependencies {
 	// https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
 	implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.2'
 
-	// https://mvnrepository.com/artifact/io.confluent/kafka-protobuf-serializer
-//	implementation 'io.confluent:kafka-protobuf-serializer:7.4.0'
 
 }
 
