@@ -15,12 +15,7 @@ public class KafkaConsumerListenerImpl implements KafkaConsumerListener {
 
     @KafkaListener(topics = "topico-teste", containerFactory = "consumer1")
     public void consumindoMensagemSimples(String mensagem) {
-        logger.info("Recebendo mensagem topico 1:  {0}", mensagem);
-    }
-
-    @KafkaListener(topics = "topico-teste-2", containerFactory = "consumer2")
-    public void consumindoMensagemTopico2(String mensagem) {
-        logger.info("Recebendo mensagem topico 2: {0}", mensagem);
+        logger.info("Recebendo mensagem topico 1:  {}", mensagem);
     }
 
 }

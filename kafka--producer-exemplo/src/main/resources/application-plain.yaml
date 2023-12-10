@@ -1,0 +1,13 @@
+spring:
+  kafka:
+    nome-topico: topico-teste
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+      security:
+        protocol: SASL_PLAINTEXT
+
+      properties:
+        sasl:
+            mechanism: PLAIN

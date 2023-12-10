@@ -1,9 +1,10 @@
 server:
-  port: 5001
+  port: 5000
 
 spring:
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: ${BOOTSTRAPS_SERVER:localhost:9092}
+    nome-topico: topico-teste
     consumer:
       group-id: consumer-teste
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer

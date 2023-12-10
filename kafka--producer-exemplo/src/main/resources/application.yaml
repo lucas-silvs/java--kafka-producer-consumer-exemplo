@@ -3,6 +3,8 @@ server:
 
 spring:
   kafka:
+    nome-topico: topico-teste
+    bootstrap-servers: ${BOOTSTRAPS_SERVER:localhost:9092}
     producer:
       acks: 0
       retries: 0
@@ -11,11 +13,11 @@ spring:
   application:
     name: java--kafka-producer-exemplo
 
-logging:
-  level:
-    org:
-      apache:
-        kafka: TRACE
+#logging:
+#  level:
+#    org:
+#      apache:
+#        kafka: TRACE
 #    root: trace
 
 
