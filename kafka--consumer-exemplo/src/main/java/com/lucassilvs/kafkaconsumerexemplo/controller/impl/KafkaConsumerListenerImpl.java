@@ -16,6 +16,15 @@ public class KafkaConsumerListenerImpl implements KafkaConsumerListener {
     @KafkaListener(topics = "topico-teste", containerFactory = "consumer1")
     public void consumindoMensagemSimples(String mensagem) {
         logger.info("Recebendo mensagem topico 1:  {}", mensagem);
+
+        System.out.println("Consumindo mensagem e gerando lag artificial");
+        try {
+            Thread.sleep(30000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("Mensagem consumida");
     }
 
 }

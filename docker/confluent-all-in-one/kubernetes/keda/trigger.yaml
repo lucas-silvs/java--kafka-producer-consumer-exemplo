@@ -1,0 +1,18 @@
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: kafka-keda-consumer-trigger
+  namespace: consumer
+spec:
+  scaleTargetRef:
+    name: consumer-deployment
+  pollingInterval: 30
+  triggers:
+  - type: kafka
+    metadata:
+      bootstrapServers: 10.152.183.38:29092
+      consumerGroup: grupo-teste
+      topic: topico-teste
+        # Optional
+      lagThreshold: "10"
+      offsetResetPolicy: latest
