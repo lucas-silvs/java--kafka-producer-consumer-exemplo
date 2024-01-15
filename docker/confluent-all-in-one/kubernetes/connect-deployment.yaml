@@ -29,7 +29,7 @@ spec:
             - name: CLASSPATH
               value: /usr/share/java/monitoring-interceptors/monitoring-interceptors-7.5.0.jar
             - name: CONNECT_BOOTSTRAP_SERVERS
-              value: 10.152.183.38:29092
+              value: broker.default.svc.cluster.local:29092
             - name: CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR
               value: "1"
             - name: CONNECT_CONFIG_STORAGE_TOPIC
@@ -61,7 +61,7 @@ spec:
             - name: CONNECT_VALUE_CONVERTER
               value: io.confluent.connect.avro.AvroConverter
             - name: CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL
-              value: http://schema-registry:8081
+              value: http://schema-registry.default.svc.cluster.local:8081
           image: cnfldemos/cp-server-connect-datagen:0.6.2-7.5.0
           name: connect
           ports:
