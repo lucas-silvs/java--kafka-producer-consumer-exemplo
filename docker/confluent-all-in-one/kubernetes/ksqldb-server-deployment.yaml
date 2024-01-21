@@ -37,7 +37,7 @@ spec:
             - name: KSQL_HOST_NAME
               value: ksqldb-server
             - name: KSQL_KSQL_CONNECT_URL
-              value: http://connect:8083
+              value: http://connect.default.svc.cluster.local:8083
             - name: KSQL_KSQL_LOGGING_PROCESSING_STREAM_AUTO_CREATE
               value: "true"
             - name: KSQL_KSQL_LOGGING_PROCESSING_TOPIC_AUTO_CREATE
@@ -45,7 +45,7 @@ spec:
             - name: KSQL_KSQL_LOGGING_PROCESSING_TOPIC_REPLICATION_FACTOR
               value: "1"
             - name: KSQL_KSQL_SCHEMA_REGISTRY_URL
-              value: http://schema-registry:8081
+              value: http://schema-registry-service.default.svc.cluster.local:8081
             - name: KSQL_LISTENERS
               value: http://0.0.0.0:8088
             - name: KSQL_PRODUCER_INTERCEPTOR_CLASSES

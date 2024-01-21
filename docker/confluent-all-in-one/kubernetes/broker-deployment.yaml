@@ -43,7 +43,7 @@ spec:
             - name: KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR
               value: "1"
             - name: KAFKA_CONFLUENT_SCHEMA_REGISTRY_URL
-              value: http://schema-registry:8081
+              value: http://schema-registry-service.default.svc.cluster.local:8081
             - name: KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS
               value: "0"
             - name: KAFKA_JMX_HOSTNAME

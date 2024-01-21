@@ -61,7 +61,7 @@ spec:
             - name: CONNECT_VALUE_CONVERTER
               value: io.confluent.connect.avro.AvroConverter
             - name: CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL
-              value: http://schema-registry.default.svc.cluster.local:8081
+              value: http://schema-registry-service.default.svc.cluster.local:8081
           image: cnfldemos/cp-server-connect-datagen:0.6.2-7.5.0
           name: connect
           ports:
