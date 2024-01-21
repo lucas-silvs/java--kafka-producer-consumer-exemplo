@@ -9,6 +9,7 @@ Projeto desenvolvido utilizando Java 17 e Spring boot 3 utilizando Kafka com um 
 - Gradle 7.6
 - Kafka 2.13
 - Docker
+- Kubernetes (opcional)
 
 ## Configurações Kafka
 
@@ -45,23 +46,31 @@ bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic topico-t
 ```
 ### Utilizando Docker
 
-Também é possivel executar o Kafka com o arquivo Docker disponibilizado no repositório na pasta "docker". Para subir o Kafka utilizando o Docker, deve executar o comando abaixo:
+Também é possivel executar o Kafka com o arquivo Docker disponibilizado no repositório na pasta `docker/confluent-all-in-one/` . Para subir o Kafka utilizando o Docker, deve executar o comando abaixo:
 
 ```
 docker-compose up
 ```
 
+### Utilizando Kubernetes
+
+Também foi disponibilizado a configuração de subir um ambiente Kafka utilizando o Kubernetes, baseado no ambiente do ambiente Docker. Para subir o ambiente Kafka no Kubernetes, basta acessar a pasta `docker/confluent-all-in-one/` e executar o comando abaixo, que irá criar todos os artefatos Kubernetes:
+
+```sh
+kubectl apply -f kubernetes
+```
 
 ## Comandos Kafka CLI
 
 ### Reasing topic para outro broker kafka
 
 Abaixo:
-```
+
+```sh
 kafka-reassign-partitions.sh --zookeeper <YOUR_ZOOKEEPER> --verify --reassignment-json-file <YOUR_JSON_FILE> 2>&1 | grep "Leader: -1" | awk '{print $2}' | sort | uniq | awk 'BEGIN{printf "{\"topics\": [\n"} {printf "    {\n        \"topic\":  \"%s\"\n    },\n", $1} END{print "]}\n"}' | sed '$s/,$//'
 ```
 
-```
+```sh
 kafka-reassign-partitions.sh --zookeeper <YOUR_ZOOKEEPER> --verify --reassignment-json-file <YOUR_JSON_FILE> 2>&1 | grep "Leader: -1" | awk '{print $2}' | sort | uniq | awk 'BEGIN{printf "{\"topics\": [\n"} {printf "    {\n        \"topic\":  \"%s\"\n    },\n", $1} END{print "]}\n"}' | sed '$s/,$//' > topics_without_leader.json
 ```
 
