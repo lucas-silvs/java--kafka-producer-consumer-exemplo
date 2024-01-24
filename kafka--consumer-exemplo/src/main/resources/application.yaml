@@ -2,14 +2,12 @@ server:
   port: 5000
 
 spring:
+  application:
+    name: java--kafka-consumer-exemplo
   kafka:
     bootstrap-servers: ${BOOTSTRAPS_SERVER:localhost:9092}
     nome-topico: topico-teste
     consumer:
       group-id: consumer-teste
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       timeout: 1000
-
-
-  application:
-    name: java--kafka-consumer-exemplo
+      client-id: ${spring.application.name}

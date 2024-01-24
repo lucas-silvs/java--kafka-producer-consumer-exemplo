@@ -5,10 +5,11 @@ spring:
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       group-id: grupo-teste
-      security:
-        protocol: SASL_PLAINTEXT
+
       properties:
         sasl.mechanism: PLAIN
+        security:
+          protocol: SASL_PLAINTEXT
 
 
 

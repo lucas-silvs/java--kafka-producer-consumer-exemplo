@@ -2,22 +2,16 @@ server:
   port: 5000
 
 spring:
-  kafka:
-    nome-topico: topico-teste
-    bootstrap-servers: ${BOOTSTRAPS_SERVER:localhost:9092}
-    producer:
-      acks: 0
-      retries: 0
-      enable.imdepotence: true
-      request.timeout.ms: 1000
   application:
     name: java--kafka-producer-exemplo
+  kafka:
+    bootstrap-servers: ${BOOTSTRAPS_SERVER:localhost:9092}
+    producer:
+      client-id: ${spring.application.name}
+      properties:
+        enable.imdepotence: true
+        request.timeout.ms: 1000
+      retries: 10
 
-#logging:
-#  level:
-#    org:
-#      apache:
-#        kafka: TRACE
-#    root: trace
 
 

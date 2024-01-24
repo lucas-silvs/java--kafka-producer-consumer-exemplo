@@ -1,6 +1,5 @@
 package com.lucassilvs.kafkaproducerexemplo.config.kafka;
 
-import org.apache.kafka.clients.producer.ProducerConfig;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,26 +14,16 @@ import java.util.Map;
 @Configuration
 public class ProducerConfigString {
 
-
-    private Map<String, Object> producerConfigs(KafkaProperties kafkaProperties, String clientId) {
+    @Bean
+    public ProducerFactory<String, String> producerFactory(final KafkaProperties kafkaProperties) {
         Map<String, Object> props = kafkaProperties.buildProducerProperties();
-
-        props.put(ProducerConfig.CLIENT_ID_CONFIG, clientId);
-        return props;
+        return new DefaultKafkaProducerFactory<>(props);
     }
-
-    private ProducerFactory<String, String> producerFactory(KafkaProperties kafkaProperties, String clientId) {
-        return new DefaultKafkaProducerFactory<>(producerConfigs(kafkaProperties, clientId));
-    }
-
 
     @Bean
-    public KafkaTemplate<String, String> kafkaTemplate(final KafkaProperties kafkaProperties) {
-        ProducerFactory<String, String> producerFactory = producerFactory(kafkaProperties,"producer1");
-
+    public KafkaTemplate<String, String> kafkaTemplate(ProducerFactory<String, String> producerFactory) {
         producerFactory.createProducer();
         return new KafkaTemplate<>(producerFactory);
     }
-
 
 }

@@ -1,7 +1,7 @@
 package com.lucassilvs.kafkaproducerexemplo.config.kafka;
 
-import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.config.SaslConfigs;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,32 +16,24 @@ import java.util.Map;
 @Configuration
 public class ProducerConfigPlainString {
 
-    private final String PLAIN_JAAS_CONFIG = "org.apache.kafka.common.security.plain.PlainLoginModule required username=\"%s\" password=\"%s\";";
-    private Map<String, Object> producerConfigs(KafkaProperties kafkaProperties, String username, String password, String clientId) {
-        Map<String, Object> props = kafkaProperties.buildProducerProperties();
+    @Value("${spring.kafka.producer.properties.plain.username}")
+    private String username;
 
+    @Value("${spring.kafka.producer.properties.plain.password}")
+    private String password;
+    private final String PLAIN_JAAS_CONFIG = "org.apache.kafka.common.security.plain.PlainLoginModule required username=\"%s\" password=\"%s\";";
+
+
+    public ProducerFactory<String, String> producerFactory(final KafkaProperties kafkaProperties) {
+        Map<String, Object> props = kafkaProperties.buildProducerProperties();
         props.put(SaslConfigs.SASL_JAAS_CONFIG, String.format(PLAIN_JAAS_CONFIG, username, password));
 
-        props.put(ProducerConfig.CLIENT_ID_CONFIG, clientId);
-        return props;
+
+        return new DefaultKafkaProducerFactory<>(props);
     }
-
-    private Map<String, Object> producerConfigs(KafkaProperties kafkaProperties, String clientId) {
-        Map<String, Object> props = kafkaProperties.buildProducerProperties();
-
-        props.put(ProducerConfig.CLIENT_ID_CONFIG, clientId);
-        return props;
-    }
-
-    private ProducerFactory<String, String> producerFactory(KafkaProperties kafkaProperties, String username, String password, String clientId) {
-        return new DefaultKafkaProducerFactory<>(producerConfigs(kafkaProperties, username, password, clientId));
-    }
-
 
     @Bean
-    public KafkaTemplate<String, String> kafkaTemplate(final KafkaProperties kafkaProperties) {
-        ProducerFactory<String, String> producerFactory = producerFactory(kafkaProperties, "producer", "producer-secret", "producer1");
-
+    public KafkaTemplate<String, String> kafkaTemplate(ProducerFactory<String, String> producerFactory) {
         producerFactory.createProducer();
         return new KafkaTemplate<>(producerFactory);
     }

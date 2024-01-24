@@ -3,6 +3,7 @@ package com.lucassilvs.kafkaproducerexemplo.gateways;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
@@ -12,10 +13,10 @@ public class KafkaPostUtils {
 
     private Logger logger = LoggerFactory.getLogger(KafkaPostUtils.class);
 
-    private final KafkaTemplate kafkaTemplate;
+    private KafkaTemplate<String,Object> kafkaTemplate;
 
-
-    public KafkaPostUtils(KafkaTemplate kafkaTemplate) {
+    @Autowired
+    public KafkaPostUtils(KafkaTemplate<String, Object> kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;
     }
 

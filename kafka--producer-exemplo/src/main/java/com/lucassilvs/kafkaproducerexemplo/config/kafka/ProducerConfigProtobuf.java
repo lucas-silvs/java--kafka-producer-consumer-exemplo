@@ -1,6 +1,6 @@
 package com.lucassilvs.kafkaproducerexemplo.config.kafka;
 
-import com.lucassilvs.kafkaproducerexemplo.gateways.kafka.UsuarioTesteAvro;
+import org.apache.avro.specific.SpecificRecord;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,21 +16,18 @@ import java.util.Map;
 public class ProducerConfigProtobuf {
 
     @Bean
-    public Map<String, Object> producerConfigs(KafkaProperties kafkaProperties) {
+    public ProducerFactory<String, SpecificRecord> producerFactory(final KafkaProperties kafkaProperties) {
         Map<String, Object> props =  kafkaProperties.buildProducerProperties();
 
-        //Utilizando AVRO
-        return props;
+
+        return new DefaultKafkaProducerFactory<>(props);
     }
 
     @Bean
-    public ProducerFactory<String, UsuarioTesteAvro> producerFactory(KafkaProperties kafkaProperties) {
-        return new DefaultKafkaProducerFactory<>(producerConfigs(kafkaProperties));
-    }
+    public KafkaTemplate<String, SpecificRecord> kafkaTemplate(ProducerFactory<String, SpecificRecord> producerFactory){
 
-    @Bean
-    public KafkaTemplate<String, UsuarioTesteAvro> kafkaTemplate(final KafkaProperties kafkaProperties){
-        return new KafkaTemplate<>(producerFactory(kafkaProperties));
+        producerFactory.createProducer();
+        return new KafkaTemplate<>(producerFactory);
     }
 
 
