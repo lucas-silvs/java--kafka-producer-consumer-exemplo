@@ -10,7 +10,7 @@ spec:
   triggers:
   - type: kafka
     metadata:
-      bootstrapServers: 10.152.183.38:29092
+      bootstrapServers: broker.default.svc.cluster.local:29092
       consumerGroup: grupo-teste
       topic: topico-teste
         # Optional
