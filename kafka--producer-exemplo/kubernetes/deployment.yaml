@@ -33,11 +33,11 @@ spec:
             timeoutSeconds: 2
           resources:
             requests:
-              memory: "400Mi"
-              cpu: "400m"
+              memory: "250Mi"
+              cpu: "100m"
             limits:
-              memory: "400Mi"
-              cpu: "400m"
+              memory: "250Mi"
+              cpu: "100m"
           envFrom:
             - configMapRef:
                 name: producer-cm
