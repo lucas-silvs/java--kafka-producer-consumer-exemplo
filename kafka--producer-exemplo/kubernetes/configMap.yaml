@@ -4,5 +4,6 @@ metadata:
   name: producer-cm
   namespace: producer
 data:
-  "SPRING_PROFILES_ACTIVE": "string"
-  "BOOTSTRAPS_SERVER": "10.1.169.36:29092"
+  "SPRING_PROFILES_ACTIVE": "avro"
+  "BOOTSTRAPS_SERVER": "broker.default.svc.cluster.local:29092"
+  "SCHEMA_REGISTRY_URL": "http://schema-registry-service.default.svc.cluster.local:8081"

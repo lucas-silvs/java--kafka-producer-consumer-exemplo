@@ -15,6 +15,6 @@ spring:
                 password: ${SR_SECRET_VALUE}
         sasl:
           mechanism: PLAIN
-          key: ${CLUSTER_SECRET_KEY}
-          password: ${CLUSTER_SECRET_VALUE}
+          key: ${CLUSTER_API_KEY}
+          password: ${CLUSTER_API_SECRET}
 

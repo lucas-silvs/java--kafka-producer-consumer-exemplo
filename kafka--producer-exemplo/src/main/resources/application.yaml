@@ -13,5 +13,14 @@ spring:
         request.timeout.ms: 1000
       retries: 10
 
-
-
+management:
+  server:
+    port: 9090
+  endpoints:
+    web:
+      base-path: /actuator
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details:  ALWAYS

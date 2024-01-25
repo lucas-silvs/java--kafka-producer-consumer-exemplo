@@ -8,7 +8,7 @@ spec:
   selector:
     app: producer-deployment
   ports:
-    - port: 5001
+    - port: 5000
       name: default-port-application
       protocol: TCP
-      targetPort: 5001
+      targetPort: 5000

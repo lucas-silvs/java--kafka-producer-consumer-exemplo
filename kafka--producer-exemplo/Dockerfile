@@ -1,7 +1,7 @@
 FROM gradle:7.5.1-jdk17 AS build
 COPY --chown=gradle:gradle . /home/gradle/src
 WORKDIR /home/gradle/src
-RUN gradle build --no-daemon
+RUN gradle clean build --no-daemon
 
 
 FROM amazoncorretto:17.0.9-alpine
@@ -20,4 +20,4 @@ ENV JAVA_OPTS "$JAVA_OPTS \
     -Duser.timezone=America/Fortaleza"
 
 ENTRYPOINT [ "sh", "-c", "java ${JAVA_OPTS} -jar app.jar"]
-EXPOSE 5000
+EXPOSE 5000 9090

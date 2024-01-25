@@ -22,5 +22,5 @@ ENV JAVA_OPTS "$JAVA_OPTS \
     -Duser.timezone=America/Fortaleza"
 
 ENTRYPOINT [ "sh", "-c", "java ${JAVA_OPTS} -jar app.jar"]
-EXPOSE 5000
+EXPOSE 5000 9090
 

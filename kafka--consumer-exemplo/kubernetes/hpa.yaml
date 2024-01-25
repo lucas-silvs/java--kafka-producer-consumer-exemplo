@@ -27,6 +27,9 @@ metadata:
   name: kafka-keda-consumer-trigger
   namespace: consumer
 spec:
+  minReplicaCount: 2  # Defina aqui o número mínimo de réplicas desejado
+  maxReplicaCount: 6  # Defina aqui o número máximo de réplicas desejado
+
   scaleTargetRef:
     name: consumer-deployment
   pollingInterval: 30

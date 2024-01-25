@@ -8,5 +8,5 @@ spring:
             mechanism: PLAIN
 
         plain:
-          username: teste
-          password: teste
+          username: ${CLUSTER_API_KEY}
+          password: ${CLUSTER_API_VALUE}

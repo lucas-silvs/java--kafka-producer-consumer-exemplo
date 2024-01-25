@@ -11,3 +11,15 @@ spring:
       group-id: consumer-teste
       timeout: 1000
       client-id: ${spring.application.name}
+
+management:
+  server:
+    port: 9090
+  endpoints:
+    web:
+      base-path: /actuator
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details:  ALWAYS
