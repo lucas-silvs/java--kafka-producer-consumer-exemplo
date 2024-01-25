@@ -17,6 +17,7 @@ public class KafkaConsumerListenerAvroImpl  {
     @KafkaListener(topics = "${spring.kafka.nome-topico}", containerFactory = "kafkalisternerContainerFactory", groupId = "${spring.kafka.consumer.group-id}")
     public void consumindoMensagemAvro(ConsumerRecord<String,UsuarioTesteAvro> mensagemSerialized) {
         UsuarioTesteAvro mensagem = mensagemSerialized.value();
+
         if(System.getenv("ENABLE_MOCK_LAG") != null && System.getenv("ENABLE_MOCK_LAG").equals("true")){
             System.out.println("Consumindo mensagem e gerando lag artificial");
             try {

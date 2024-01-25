@@ -1,22 +1,50 @@
-apiVersion: autoscaling/v2
-kind: HorizontalPodAutoscaler
+# --- Depreciado será usado o KEDA para escalar com CPU e lag do Kafka
+#apiVersion: autoscaling/v2
+#kind: HorizontalPodAutoscaler
+#metadata:
+#  name: consumer-hpa
+#  namespace: consumer
+#  labels:
+#    app: consumer
+#spec:
+#  scaleTargetRef:
+#    apiVersion: apps/v1
+#    kind: Deployment
+#    name: consumer-deployment
+#  minReplicas: 1
+#  maxReplicas: 3
+#  metrics:
+#    - type: Resource
+#      resource:
+#        name: cpu
+#        target:
+#          type: Utilization
+#          averageUtilization: 50
+
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
 metadata:
-  name: consumer-hpa
+  name: kafka-keda-consumer-trigger
   namespace: consumer
-  labels:
-    app: consumer
 spec:
   scaleTargetRef:
-    apiVersion: apps/v1
-    kind: Deployment
     name: consumer-deployment
-  minReplicas: 1
-  maxReplicas: 3
-  metrics:
-    - type: Resource
-      resource:
-        name: cpu
-        target:
-          type: Utilization
-          averageUtilization: 50
+  pollingInterval: 30
+  triggers:
+    #  Configuração para configuração de trigger utilizando lag de consumer Kafka
+    - type: kafka
+      metadata:
+        bootstrapServers: broker.default.svc.cluster.local:29092
+        consumerGroup: consumer-teste
+        topic: topico-teste-avro
+        # Optional
+        lagThreshold: "10"
+        offsetResetPolicy: latest
+
+    - type: cpu
+      metricType: Utilization # Allowed types are 'Utilization' or 'AverageValue'
+      metadata:
+        #      type: Utilization # Deprecated in favor of trigger.metricType; allowed types are 'Utilization' or 'AverageValue'
+        value: "60"
+
 

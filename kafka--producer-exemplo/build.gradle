@@ -38,10 +38,10 @@ dependencies {
 // https://mvnrepository.com/artifact/io.micrometer/micrometer-tracing-bridge-brave
 	implementation 'io.micrometer:micrometer-tracing-bridge-brave:1.2.2'
 
+}
 
-
-
-
+jar {
+	enabled = false
 }
 
 tasks.named('test') {
