@@ -14,8 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/mensagem")
 public class MensagemControllerImpl  implements MensagemController {
 
+    private final MensagemService mensagemService;
+
     @Autowired
-    private MensagemService mensagemService;
+    public MensagemControllerImpl(MensagemService mensagemService) {
+        this.mensagemService = mensagemService;
+    }
 
     @PostMapping
     public ResponseEntity<Object> postarMensagem(MensagemRequest mensagem) {

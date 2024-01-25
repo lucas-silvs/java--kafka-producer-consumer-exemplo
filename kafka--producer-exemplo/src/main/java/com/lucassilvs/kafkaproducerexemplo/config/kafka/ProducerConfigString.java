@@ -1,7 +1,6 @@
 package com.lucassilvs.kafkaproducerexemplo.config.kafka;
 
-import org.apache.kafka.common.serialization.StringSerializer;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -9,51 +8,28 @@ import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @Profile("string")
 @Configuration
 public class ProducerConfigString {
 
-    @Value("${spring.kafka.bootstrap-servers}")
-    private String bootstrapServers;
-
-    @Value("${spring.kafka.producer.ack}")
-    private String acknowledgement;
-
-    @Value("${spring.kafka.producer.number-of-tries}")
-    private Integer numberOfTries;
-
-    @Value("${spring.kafka.producer.imdepotence}")
-    private boolean imdepotence;
-
-    @Value("${spring.kafka.producer.timeout}")
-    private Integer timeOut;
-
-
     @Bean
-    public Map<String, Object> producerConfigs() {
-        Map<String, Object> props = new HashMap<>();
-        props.put(org.apache.kafka.clients.producer.ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-        props.put(org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        props.put(org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        props.put(org.apache.kafka.clients.producer.ProducerConfig.ACKS_CONFIG, acknowledgement);
-        props.put(org.apache.kafka.clients.producer.ProducerConfig.RETRIES_CONFIG, numberOfTries);
-        props.put(org.apache.kafka.clients.producer.ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG, timeOut);
-        props.put(org.apache.kafka.clients.producer.ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, imdepotence);
-        return props;
+    public ProducerFactory<String, String> producerFactory(final KafkaProperties kafkaProperties) {
+        Map<String, Object> props = kafkaProperties.buildProducerProperties(null);
+        return new DefaultKafkaProducerFactory<>(props);
     }
 
     @Bean
-    public ProducerFactory<String, String> producerFactory() {
-        return new DefaultKafkaProducerFactory<>(producerConfigs());
-    }
+    public KafkaTemplate<String, String> kafkaTemplate(ProducerFactory<String, String> producerFactory) {
+        // inicializa o producer no start da aplicação
+        producerFactory.createProducer();
 
-    @Bean
-    public KafkaTemplate<String, String> kafkaTemplate() {
-        return new KafkaTemplate<>(producerFactory());
-    }
+        KafkaTemplate<String, String> kafkaTemplate = new KafkaTemplate<>(producerFactory);
 
+        // Habilita Tracing nas mensagens enviadas adicionando no header o traceparent
+        kafkaTemplate.setObservationEnabled(true);
+        return kafkaTemplate;
+    }
 
 }

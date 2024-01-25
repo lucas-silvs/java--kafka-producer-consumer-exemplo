@@ -9,6 +9,7 @@ Projeto desenvolvido utilizando Java 17 e Spring boot 3 utilizando Kafka com um 
 - Gradle 7.6
 - Kafka 2.13
 - Docker
+- Kubernetes (opcional)
 
 ## Configurações Kafka
 
@@ -45,23 +46,31 @@ bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic topico-t
 ```
 ### Utilizando Docker
 
-Também é possivel executar o Kafka com o arquivo Docker disponibilizado no repositório na pasta "docker". Para subir o Kafka utilizando o Docker, deve executar o comando abaixo:
+Também é possivel executar o Kafka com o arquivo Docker disponibilizado no repositório na pasta `docker/confluent-all-in-one/` . Para subir o Kafka utilizando o Docker, deve executar o comando abaixo:
 
 ```
 docker-compose up
 ```
 
+### Utilizando Kubernetes
+
+Também foi disponibilizado a configuração de subir um ambiente Kafka utilizando o Kubernetes, baseado no ambiente do ambiente Docker. Para subir o ambiente Kafka no Kubernetes, basta acessar a pasta `docker/confluent-all-in-one/` e executar o comando abaixo, que irá criar todos os artefatos Kubernetes:
+
+```sh
+kubectl apply -f kubernetes
+```
 
 ## Comandos Kafka CLI
 
 ### Reasing topic para outro broker kafka
 
 Abaixo:
-```
+
+```sh
 kafka-reassign-partitions.sh --zookeeper <YOUR_ZOOKEEPER> --verify --reassignment-json-file <YOUR_JSON_FILE> 2>&1 | grep "Leader: -1" | awk '{print $2}' | sort | uniq | awk 'BEGIN{printf "{\"topics\": [\n"} {printf "    {\n        \"topic\":  \"%s\"\n    },\n", $1} END{print "]}\n"}' | sed '$s/,$//'
 ```
 
-```
+```sh
 kafka-reassign-partitions.sh --zookeeper <YOUR_ZOOKEEPER> --verify --reassignment-json-file <YOUR_JSON_FILE> 2>&1 | grep "Leader: -1" | awk '{print $2}' | sort | uniq | awk 'BEGIN{printf "{\"topics\": [\n"} {printf "    {\n        \"topic\":  \"%s\"\n    },\n", $1} END{print "]}\n"}' | sed '$s/,$//' > topics_without_leader.json
 ```
 
@@ -100,6 +109,124 @@ curl --location 'http://localhost:8083/connectors' \
 ```
 
 Com isso será criado o conector no servidor do kafka connect que está no Docker.
+
+
+## Uso de multiplos consumers e producers
+
+Para utilizar diversos consumers e producer, será necessário instancias os beans
+para cada um e os factories para cada um, conforme o exemplo abaixo:
+
+### Producer
+ProducerConfig:
+``` java
+    private Map<String, Object> producerConfigs(KafkaProperties kafkaProperties, String username, String password, String clientId) {
+        Map<String, Object> props = kafkaProperties.buildProducerProperties();
+
+        props.put(SaslConfigs.SASL_JAAS_CONFIG, String.format(PLAIN_JAAS_CONFIG, username, password));
+
+        props.put(ProducerConfig.CLIENT_ID_CONFIG, clientId);
+        return props;
+    }
+
+    private ProducerFactory<String, String> producerFactory(KafkaProperties kafkaProperties, String username, String password, String clientId) {
+        return new DefaultKafkaProducerFactory<>(producerConfigs(kafkaProperties, username, password, clientId));
+    }
+
+
+    @Bean
+    public KafkaTemplate<String, String> kafkaTemplate(final KafkaProperties kafkaProperties) {
+        ProducerFactory<String, String> producerFactory = producerFactory(kafkaProperties, "producer", "producer-secret", "producer1");
+
+        producerFactory.createProducer();
+        return new KafkaTemplate<>(producerFactory);
+    }
+
+    @Bean
+    public KafkaTemplate<String, String> kafkaTemplateTopico2(final KafkaProperties kafkaProperties) {
+        ProducerFactory<String, String> producerFactory = producerFactory(kafkaProperties, "producer2", "teste", "producer2");
+
+        producerFactory.createProducer();
+        return new KafkaTemplate<>(producerFactory);
+    }
+    
+```
+Injetando cada producer:
+
+```java
+// omitindo nome da classe
+    private final KafkaTemplate kafkaTemplate;
+
+    private final KafkaTemplate kafkaTemplateTopico2;
+
+    public KafkaPostUtils(KafkaTemplate kafkaTemplate, KafkaTemplate kafkaTemplateTopico2) {
+        this.kafkaTemplate = kafkaTemplate;
+        this.kafkaTemplateTopico2 = kafkaTemplateTopico2;
+    }
+
+    public void postarMensagem(Object mensagem, String nomeTopico){
+        logger.info("Postando mensagem: " + mensagem + " no tópico " + nomeTopico);
+        kafkaTemplate.send(nomeTopico, mensagem);
+
+        kafkaTemplateTopico2.send("topico-teste-2", mensagem);
+
+        logger.info("mensagem enviada com sucesso");
+    }
+```
+
+Para o producer, o nome dos campos de classe KafkaTemplate deve ser o mesmo que cada
+bean criado na classe ProducerConfig.
+
+### Consumer
+
+ConsumerConfig:
+
+```java
+    private ConsumerFactory<String, String> consumerFactory(KafkaProperties kafkaProperties, String username, String password, String groupId, String clientId){
+        Map<String, Object> properties = kafkaProperties.buildConsumerProperties();
+        properties.put(SaslConfigs.SASL_JAAS_CONFIG, String.format(PLAIN_JAAS_CONFIG, username, password));
+
+        properties.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
+        properties.put(CommonClientConfigs.CLIENT_ID_CONFIG, clientId);
+        return new DefaultKafkaConsumerFactory<>(properties);
+    }
+
+    @Bean
+    public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String,String>> consumer1(KafkaProperties kafkaProperties){
+        ConcurrentKafkaListenerContainerFactory<String,String> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(consumerFactory(kafkaProperties, "consumer", "consumer-secret", "grupo-teste", "consumer1"));
+
+        //Adicionando retry para caso de erro de autenticação com o broker (GroupAuthorizationException)
+        factory.getContainerProperties().setAuthExceptionRetryInterval(Duration.ofSeconds(7));
+
+        return factory;
+    }
+
+    @Bean
+    public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String,String>> consumer2(KafkaProperties kafkaProperties){
+        ConcurrentKafkaListenerContainerFactory<String,String> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(consumerFactory(kafkaProperties, "consumer2", "teste", "grupo-teste-2", "consumer2"));
+
+        //Adicionando retry para caso de erro de autenticação com o broker (GroupAuthorizationException)
+        factory.getContainerProperties().setAuthExceptionRetryInterval(Duration.ofSeconds(7));
+
+        return factory;
+    }
+```
+
+Injetando cada consumer:
+
+```java
+    @KafkaListener(topics = "topico-teste", containerFactory = "consumer1")
+    public void consumindoMensagemSimples(String mensagem) {
+        logger.info("Recebendo mensagem topico 1:  {0}", mensagem);
+    }
+
+    @KafkaListener(topics = "topico-teste-2", containerFactory = "consumer2")
+    public void consumindoMensagemTopico2(String mensagem) {
+        logger.info("Recebendo mensagem topico 2: {0}", mensagem);
+    }
+```
+Para injetar cada consumer, é informado o nome do bean de cada consumer no campo "containerFactory" do @KafkaListener.
 
 ## Referencias
 

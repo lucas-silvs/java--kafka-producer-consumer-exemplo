@@ -13,12 +13,15 @@ import org.springframework.stereotype.Service;
 @Service
 public class MensagemServiceAvroImpl implements MensagemService {
 
+    private final KafkaPostUtils kafkaPostUtils;
+
+    private final String nomeTopico;
+
     @Autowired
-    private KafkaPostUtils kafkaPostUtils;
-
-    @Value("${spring.kafka.nome-topico}")
-    private String nomeTopico;
-
+    public MensagemServiceAvroImpl(KafkaPostUtils kafkaPostUtils, @Value("${spring.kafka.nome-topico}") String nomeTopico) {
+        this.kafkaPostUtils = kafkaPostUtils;
+        this.nomeTopico = nomeTopico;
+    }
 
     public void postarMensagem(MensagemRequest mensagem) {
 
@@ -29,8 +32,5 @@ public class MensagemServiceAvroImpl implements MensagemService {
                 .build();
         kafkaPostUtils.postarMensagem(usuarioTesteAvro , nomeTopico);
     }
-
-
-
 
 }

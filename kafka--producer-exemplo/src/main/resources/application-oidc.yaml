@@ -1,31 +1,36 @@
 spring:
   kafka:
     nome-topico: topico--teste
-    schema-registry:
-      url: ${URL_SCHEMA_REGISTRY}
-    properties:
-      basic:
-        auth:
-          credentials:
-            source: USER_INFO
-          user:
-            info:
-              username: ${SR_SECRET_KEY}
-              password: ${SR_SECRET_VALUE}
-      sasl:
-        mechanism: OAUTHBEARER
-        oauthbearer:
-          token:
-            endpoint:
-              url: ${OIDC_TOKEN_ENDPOINT}
-        jaas:
-        clientId: ${OIDC_CLIENT_ID}
-        clientSecret: ${OIDC_CLIENT_SECRET}
-        scope: ${OIDC_SCOPE}
-    bootstrap-servers: ${URL_BOOTSTRAP_SERVER}
-security:
-  protocol: SASL_SSL
+    producer:
+
+      properties:
+        avro:
+          remove:
+            java:
+              properties: true
+        basic:
+          auth:
+            credentials:
+              source: USER_INFO
+            user:
+              info:
+                username: ${SR_SECRET_KEY}
+                password: ${SR_SECRET_VALUE}
+        sasl:
+          login:
+            callback:
+              handler:
+                class: org.apache.kafka.common.security.oauthbearer.secured.OAuthBearerLoginCallbackHandler
+          mechanism: OAUTHBEARER
+          oauthbearer:
+            token:
+              endpoint:
+                url: ${OIDC_TOKEN_ENDPOINT}
+        security:
+          protocol: SASL_SSL
+
 
 extension:
   cluster: ${CLUSTER_ID}
   identity-pool: ${IDENTITY_POOL_ID}
+  scope: ${OIDC_SCOPE}

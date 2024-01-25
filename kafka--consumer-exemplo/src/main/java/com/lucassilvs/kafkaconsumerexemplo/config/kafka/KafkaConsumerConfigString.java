@@ -12,21 +12,24 @@ import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
 
 import java.time.Duration;
+import java.util.Map;
 
 @Profile("string")
 @EnableKafka
 @Configuration
 public class KafkaConsumerConfigString {
 
-    @Bean
-    public ConsumerFactory<String, String> consumerFactory(KafkaProperties kafkaProperties) {
-        return new DefaultKafkaConsumerFactory<>(kafkaProperties.buildConsumerProperties());
+
+    private ConsumerFactory<String, String> consumerFactory(final KafkaProperties kafkaProperties){
+        Map<String, Object> properties = kafkaProperties.buildConsumerProperties();
+
+        return new DefaultKafkaConsumerFactory<>(properties);
     }
 
     @Bean
-    public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String,String>> kafkalisternerContainerFactory(KafkaProperties kafkaProperties){
+    public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String,String>> consumer1(ConsumerFactory<String, String> consumerFactory){
         ConcurrentKafkaListenerContainerFactory<String,String> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(consumerFactory(kafkaProperties));
+        factory.setConsumerFactory(consumerFactory);
 
         //Adicionando retry para caso de erro de autenticação com o broker (GroupAuthorizationException)
         factory.getContainerProperties().setAuthExceptionRetryInterval(Duration.ofSeconds(7));

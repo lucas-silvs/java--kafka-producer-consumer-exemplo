@@ -1,0 +1,25 @@
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: kafka-keda-consumer-trigger
+  namespace: consumer
+spec:
+  scaleTargetRef:
+    name: consumer-deployment
+  pollingInterval: 30
+  triggers:
+    #  Configuração para configuração de trigger utilizando lag de consumer Kafka
+    - type: kafka
+      metadata:
+        bootstrapServers: broker.default.svc.cluster.local:29092
+        consumerGroup: consumer-teste
+        topic: topico-teste-avro
+        # Optional
+        lagThreshold: "10"
+        offsetResetPolicy: latest
+
+    - type: cpu
+      metricType: Utilization # Allowed types are 'Utilization' or 'AverageValue'
+      metadata:
+        #      type: Utilization # Deprecated in favor of trigger.metricType; allowed types are 'Utilization' or 'AverageValue'
+        value: "60"

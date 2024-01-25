@@ -1,14 +1,25 @@
 server:
-  port: 5001
+  port: 5000
 
 spring:
-  kafka:
-    bootstrap-servers: localhost:9092
-    consumer:
-      group-id: consumer-teste
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      timeout: 1000
-
-
   application:
     name: java--kafka-consumer-exemplo
+  kafka:
+    bootstrap-servers: ${BOOTSTRAPS_SERVER:localhost:9092}
+    nome-topico: topico-teste
+    consumer:
+      group-id: consumer-teste
+      timeout: 1000
+      client-id: ${spring.application.name}
+
+management:
+  server:
+    port: 9090
+  endpoints:
+    web:
+      base-path: /actuator
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details:  ALWAYS

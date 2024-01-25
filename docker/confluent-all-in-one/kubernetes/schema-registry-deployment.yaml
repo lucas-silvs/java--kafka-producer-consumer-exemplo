@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f docker-compose.yaml
+    kompose.version: 1.31.2 (a92241f79)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: schema-registry
+  name: schema-registry
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: schema-registry-service
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f docker-compose.yaml
+        kompose.version: 1.31.2 (a92241f79)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/confluent-all-in-one-default: "true"
+        io.kompose.service: schema-registry-service
+    spec:
+      containers:
+        - env:
+          - name: SCHEMA_REGISTRY_HOST_NAME
+            value: schema-registry.default.svc.cluster.local
+          - name: SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL
+            value: zookeeper.default.svc.cluster.local:2181
+          - name: SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS
+            value: broker.default.svc.cluster.local:29092
+            # value: zookeeper:2181
+          - name: SCHEMA_REGISTRY_LISTENERS
+            value: http://0.0.0.0:8081
+          image: confluentinc/cp-schema-registry:7.5.0
+          name: schema-registry
+          ports:
+            - containerPort: 8081
+              hostPort: 8081
+              protocol: TCP
+          resources: {}
+      hostname: schema-registry
+      restartPolicy: Always
+status: {}

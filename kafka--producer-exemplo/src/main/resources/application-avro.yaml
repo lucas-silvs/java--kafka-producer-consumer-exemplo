@@ -1,5 +1,10 @@
 spring:
   kafka:
     nome-topico: topico-teste-avro
-    schema-registry:
-      url: http://localhost:8081
+
+    producer:
+      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      properties:
+        schema.registry.url: ${SCHEMA_REGISTRY_URL:http://localhost:8081}
+        sasl.mechanism: SASL_PLAINTEXT

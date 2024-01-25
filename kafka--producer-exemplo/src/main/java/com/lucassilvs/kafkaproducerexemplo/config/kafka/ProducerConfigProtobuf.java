@@ -1,6 +1,6 @@
 package com.lucassilvs.kafkaproducerexemplo.config.kafka;
 
-import com.lucassilvs.kafkaproducerexemplo.gateways.kafka.UsuarioTesteAvro;
+import org.apache.avro.specific.SpecificRecord;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,21 +16,23 @@ import java.util.Map;
 public class ProducerConfigProtobuf {
 
     @Bean
-    public Map<String, Object> producerConfigs(KafkaProperties kafkaProperties) {
-        Map<String, Object> props =  kafkaProperties.buildProducerProperties();
+    public ProducerFactory<String, SpecificRecord> producerFactory(final KafkaProperties kafkaProperties) {
+        Map<String, Object> props =  kafkaProperties.buildProducerProperties(null);
 
-        //Utilizando AVRO
-        return props;
+
+        return new DefaultKafkaProducerFactory<>(props);
     }
 
     @Bean
-    public ProducerFactory<String, UsuarioTesteAvro> producerFactory(KafkaProperties kafkaProperties) {
-        return new DefaultKafkaProducerFactory<>(producerConfigs(kafkaProperties));
-    }
+    public KafkaTemplate<String, SpecificRecord> kafkaTemplate(ProducerFactory<String, SpecificRecord> producerFactory){
+        // inicializa o producer no start da aplicação
+        producerFactory.createProducer();
 
-    @Bean
-    public KafkaTemplate<String, UsuarioTesteAvro> kafkaTemplate(final KafkaProperties kafkaProperties){
-        return new KafkaTemplate<>(producerFactory(kafkaProperties));
+        KafkaTemplate<String, SpecificRecord> kafkaTemplate = new KafkaTemplate<>(producerFactory);
+
+        // Habilita Tracing nas mensagens enviadas adicionando no header o traceparent
+        kafkaTemplate.setObservationEnabled(true);
+        return kafkaTemplate;
     }
 
 

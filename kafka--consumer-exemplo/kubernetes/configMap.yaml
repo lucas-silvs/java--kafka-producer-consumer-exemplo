@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: consumer-cm
+  namespace: consumer
+data:
+  "SPRING_PROFILES_ACTIVE": "avro"
+  "BOOTSTRAPS_SERVER": "broker.default.svc.cluster.local:29092"
+  "SCHEMA_REGISTRY_URL": "http://schema-registry-service.default.svc.cluster.local:8081"
+  "ENABLE_MOCK_LAG": "true"
