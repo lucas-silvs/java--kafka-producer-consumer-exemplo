@@ -35,8 +35,10 @@ dependencies {
 	implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.2'
 
 
-// https://mvnrepository.com/artifact/io.micrometer/micrometer-tracing-bridge-brave
+	// Kafka Tracing
 	implementation 'io.micrometer:micrometer-tracing-bridge-brave:1.2.2'
+	// metrics prometheus
+	implementation 'io.micrometer:micrometer-registry-prometheus:1.12.2'
 
 }
 
