@@ -1,7 +1,7 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.0.1'
-	id 'io.spring.dependency-management' version '1.1.0'
+	id 'org.springframework.boot' version '3.2.2'
+	id 'io.spring.dependency-management' version '1.1.4'
 	id "com.github.davidmc24.gradle.plugin.avro" version "1.5.0"
 }
 
@@ -28,8 +28,10 @@ dependencies {
 
 	//AVRO - Schema Registry
 	implementation 'io.confluent:kafka-avro-serializer:7.3.1'
-	implementation 'org.springframework.cloud:spring-cloud-stream-schema:2.2.1.RELEASE'
-	implementation 'org.springframework.cloud:spring-cloud-stream-binder-kafka:2.2.1.RELEASE'
+
+	// https://mvnrepository.com/artifact/io.micrometer/micrometer-tracing-bridge-brave
+	implementation 'io.micrometer:micrometer-tracing-bridge-brave:1.2.2'
+
 
 }
 

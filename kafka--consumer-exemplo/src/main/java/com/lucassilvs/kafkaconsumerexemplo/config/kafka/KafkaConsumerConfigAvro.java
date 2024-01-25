@@ -24,6 +24,7 @@ public class KafkaConsumerConfigAvro {
     @Bean
     public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String,SpecificRecord>> kafkalisternerContainerFactory(ConsumerFactory<String, SpecificRecord> consumerFactory){
         ConcurrentKafkaListenerContainerFactory<String,SpecificRecord> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        factory.getContainerProperties().setObservationEnabled(true);
         factory.setConsumerFactory(consumerFactory);
         return factory;
     }
