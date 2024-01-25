@@ -25,7 +25,7 @@ public class ProducerConfigPlainString {
 
 
     public ProducerFactory<String, String> producerFactory(final KafkaProperties kafkaProperties) {
-        Map<String, Object> props = kafkaProperties.buildProducerProperties();
+        Map<String, Object> props = kafkaProperties.buildProducerProperties(null);
         props.put(SaslConfigs.SASL_JAAS_CONFIG, String.format(PLAIN_JAAS_CONFIG, username, password));
 
 
@@ -34,8 +34,14 @@ public class ProducerConfigPlainString {
 
     @Bean
     public KafkaTemplate<String, String> kafkaTemplate(ProducerFactory<String, String> producerFactory) {
+        // inicializa o producer no start da aplicação
         producerFactory.createProducer();
-        return new KafkaTemplate<>(producerFactory);
+
+        KafkaTemplate<String, String> kafkaTemplate = new KafkaTemplate<>(producerFactory);
+
+        // Habilita Tracing nas mensagens enviadas adicionando no header o traceparent
+        kafkaTemplate.setObservationEnabled(true);
+        return kafkaTemplate;
     }
 
 

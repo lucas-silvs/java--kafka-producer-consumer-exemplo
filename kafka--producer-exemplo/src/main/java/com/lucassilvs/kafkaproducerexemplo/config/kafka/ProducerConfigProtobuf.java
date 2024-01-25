@@ -17,7 +17,7 @@ public class ProducerConfigProtobuf {
 
     @Bean
     public ProducerFactory<String, SpecificRecord> producerFactory(final KafkaProperties kafkaProperties) {
-        Map<String, Object> props =  kafkaProperties.buildProducerProperties();
+        Map<String, Object> props =  kafkaProperties.buildProducerProperties(null);
 
 
         return new DefaultKafkaProducerFactory<>(props);
@@ -25,9 +25,14 @@ public class ProducerConfigProtobuf {
 
     @Bean
     public KafkaTemplate<String, SpecificRecord> kafkaTemplate(ProducerFactory<String, SpecificRecord> producerFactory){
-
+        // inicializa o producer no start da aplicação
         producerFactory.createProducer();
-        return new KafkaTemplate<>(producerFactory);
+
+        KafkaTemplate<String, SpecificRecord> kafkaTemplate = new KafkaTemplate<>(producerFactory);
+
+        // Habilita Tracing nas mensagens enviadas adicionando no header o traceparent
+        kafkaTemplate.setObservationEnabled(true);
+        return kafkaTemplate;
     }
 
 

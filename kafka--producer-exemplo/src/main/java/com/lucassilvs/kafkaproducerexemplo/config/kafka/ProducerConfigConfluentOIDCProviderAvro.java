@@ -52,7 +52,7 @@ public class ProducerConfigConfluentOIDCProviderAvro {
     @Bean
     public ProducerFactory<String, SpecificRecord> producerFactory(final KafkaProperties kafkaProperties) {
 
-        Map<String, Object> props = kafkaProperties.buildProducerProperties();
+        Map<String, Object> props = kafkaProperties.buildProducerProperties(null);
 
         props.put(SaslConfigs.SASL_JAAS_CONFIG,  String.format(OAUTHBEARER_JAAS_CONFIG, clientId, clientSecret, scope, clusterId, identityPool));
 
@@ -64,9 +64,15 @@ public class ProducerConfigConfluentOIDCProviderAvro {
 
     @Bean
     public KafkaTemplate<String, SpecificRecord> kafkaTemplate(ProducerFactory<String, SpecificRecord> producerFactory) {
-
+        // inicializa o producer no start da aplicação
         producerFactory.createProducer();
-        return new KafkaTemplate<>(producerFactory);
+
+        KafkaTemplate<String, SpecificRecord> kafkaTemplate = new KafkaTemplate<>(producerFactory);
+
+        // Habilita Tracing nas mensagens enviadas adicionando no header o traceparent
+        kafkaTemplate.setObservationEnabled(true);
+
+        return kafkaTemplate;
     }
 
 

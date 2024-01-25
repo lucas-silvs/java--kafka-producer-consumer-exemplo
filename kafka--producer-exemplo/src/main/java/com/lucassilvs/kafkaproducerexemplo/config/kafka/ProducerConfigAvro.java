@@ -14,23 +14,24 @@ import java.util.Map;
 @Configuration
 public class ProducerConfigAvro {
 
-//    @Bean
-//    public Map<String, Object> producerConfigs( KafkaProperties kafkaProperties) {
-//        Map<String, Object> props = kafkaProperties.buildProducerProperties();
-//        return props;
-//    }
 
     @Bean
     public ProducerFactory<String, Object> producerFactory(final KafkaProperties kafkaProperties) {
 
-        Map<String, Object> props = kafkaProperties.buildProducerProperties();
+        Map<String, Object> props = kafkaProperties.buildProducerProperties(null);
         return new DefaultKafkaProducerFactory<>(props);
     }
 
     @Bean
     public KafkaTemplate<String, Object> kafkaTemplate(ProducerFactory<String, Object> producerFactory) {
+        // inicializa o producer no start da aplicação
         producerFactory.createProducer();
-        return new KafkaTemplate<>(producerFactory);
+
+        KafkaTemplate<String, Object> kafkaTemplate = new KafkaTemplate<>(producerFactory);
+
+        // Habilita Tracing nas mensagens enviadas adicionando no header o traceparent
+        kafkaTemplate.setObservationEnabled(true);
+        return kafkaTemplate;
     }
 
 }
