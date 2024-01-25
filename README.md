@@ -2,12 +2,34 @@
 
 Projeto desenvolvido utilizando Java 17 e Spring boot 3 utilizando Kafka com um producer e um consumer seguindo o modelo de Arquitetura Orientada a Evento
 
+## Sumário
+
+- [Requisitos](#requisitos)
+- [Configurações Kafka](#configurações-kafka)
+  - [Kafka Local:](#kafka-local)
+    - [Criar tópico Kafka](#criar-tópico-kafka)
+    - [Acompanhar tópico](#acompanhar-tópico)
+  - [Utilizando Docker](#utilizando-docker)
+  - [Utilizando Kubernetes](#utilizando-kubernetes)
+- [Comandos Kafka CLI](#comandos-kafka-cli)
+  - [Reasing topic para outro broker kafka](#reasing-topic-para-outro-broker-kafka)
+- [Mirror Maker 2](#mirror-maker-2)
+- [Kafka Confluent Replicator](#kafka-confluent-replicator)
+- [Uso de multiplos consumers e producers](#uso-de-multiplos-consumers-e-producers)
+  - [Producer](#producer)
+  - [Consumer](#consumer)
+- [Monitoramento](#monitoramento)
+  - [Grafana e Prometheus](#grafana-e-prometheus)
+  - [Painel de controle do Kafka - Confluent Control Center](#painel-de-controle-do-kafka---confluent-control-center)
+- [Escalando aplicações Kubernetes com o KEDA](#escalando-aplicações-kubernetes-com-o-keda)
+- [Referencias](#referencias)
+
 ## Requisitos
 
 - Java 17
-- Spring 3
+- Spring 3.2.2
 - Gradle 7.6
-- Kafka 2.13
+- Kafka 3.5.0
 - Docker
 - Kubernetes (opcional)
 
@@ -228,9 +250,60 @@ Injetando cada consumer:
 ```
 Para injetar cada consumer, é informado o nome do bean de cada consumer no campo "containerFactory" do @KafkaListener.
 
+
+## Monitoramento
+
+### Grafana e Prometheus
+
+É possivel monitorar os recursos do cluster Kubernetes utilizando o Prometheus e o Grafana, para isso.
+Como foi utilizando o Microk8s para os testes local, execute os comandos abaixo para instalar o Prometheus e o Grafana:
+
+```sh
+# Via Microk8s
+microk8s enable observability
+```
+
+Com isso, será habilitado o prometheus e o Dash do Grafana, que pode ser acessado pela url http://localhost:37349,
+onde o usuário e senha padrão é admin/prom-operator.
+
+### Painel de controle do Kafka - Confluent Control Center
+
+Também é possivel monitorar o Kafka utilizando o Confluent Control Center,
+que pode ser acessado pela url http://localhost:9021, que monitora os recursos internos do Kafka, como o KSQLDB,
+Schema Registry, Kafka Connect, Kafka Broker, Kafka Rest Proxy.
+
+
+## Escalando aplicações Kubernetes com o KEDA
+
+Para a escala de aplicações Kubernetes, foi utilizado o KEDA, que é um componente que permite escalar aplicações baseado
+em métricas mais complexas, no caso foi utilizado o lag do consumer Kafka. Para isso, foi substituido o artefato HPA (Horizontal Pod Autoscaler)
+pelo ScaledObject do KEDA, que pode ser visto no arquivo `hpa.yaml` na pasta `kubernetes/` nos projetos producer e consumer.
+No arquivo contem o exemplo de implementação com HPA e com o ScaledObject do KEDA, onde está escalando com memoria e cpu, e para o consumer inclui
+a metrica do lag do consumer.
+
+Primeiro, é necessário instalar o KEDA no cluster Kubernetes, para isso, execute o comando abaixo:
+
+```sh
+# Via Microk8s
+microk8s enable keda
+
+# Via Helm
+helm repo add kedacore https://kedacore.github.io/charts
+helm repo update
+helm install keda kedacore/keda --namespace keda --create-namespace
+```
+
+após aplicar, ao realizar o deploy da aplicação, será aplicado junto o Trigger do KEDA, que irá monitorar o lag do consumer e irá escalar
+baseado no lag.
+Para simular um lag no consumer, altere a variavel `ENABLE_MOCK_LAG` para `true` no arquivo `configMap.yaml` na pasta `kubernetes/` do projeto consumer.
+Com isso ao produzir as mensagens com o consumer, o consumer irá aguardar 30 segundos antes de consumir a mensagem, simulando um lag.
+
 ## Referencias
 
 - [Docker](https://www.docker.com/)
 - [Kafka](https://kafka.apache.org/)
 - [Spring](https://spring.io/projects/spring-boot)
 - [Confluent](https://docs.confluent.io/5.5.1/quickstart/ce-docker-quickstart.html)
+- [Kubernetes](https://kubernetes.io/)
+- [Microk8s](https://microk8s.io/)
+- [KEDA](https://keda.sh/)
