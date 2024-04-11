@@ -2,9 +2,9 @@ package com.lucassilvs.kafkaconsumerexemplo.controller;
 
 
 
-public interface KafkaConsumerListener {
+public interface KafkaConsumerListener<T> {
 
-    void consumindoMensagemSimples(String mensagem);
+    void consumindoMensagemSimples(T mensagem);
 
 
 

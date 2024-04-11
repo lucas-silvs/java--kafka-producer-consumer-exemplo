@@ -6,7 +6,7 @@ spring:
     name: java--kafka-consumer-exemplo
   kafka:
     bootstrap-servers: ${BOOTSTRAPS_SERVER:localhost:9092}
-    nome-topico: topico-teste
+    nome-topico: teste-topico-json
     consumer:
       group-id: consumer-teste
       timeout: 1000
