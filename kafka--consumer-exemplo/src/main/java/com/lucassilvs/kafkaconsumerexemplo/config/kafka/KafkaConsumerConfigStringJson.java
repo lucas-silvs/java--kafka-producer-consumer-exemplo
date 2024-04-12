@@ -11,8 +11,6 @@ import org.springframework.kafka.config.KafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
-import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
-import org.springframework.kafka.support.serializer.JsonDeserializer;
 
 import java.time.Duration;
 import java.util.Map;
@@ -26,9 +24,6 @@ public class KafkaConsumerConfigStringJson {
     @Bean
     public ConsumerFactory<String, OrderModel> consumerProperties(final KafkaProperties kafkaProperties){
         Map<String, Object> properties = kafkaProperties.buildConsumerProperties(null);
-        properties.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, JsonDeserializer.class.getName());
-        properties.put(JsonDeserializer.VALUE_DEFAULT_TYPE, OrderModel.class.getName());
-        properties.put(JsonDeserializer.TYPE_MAPPINGS, "address:com.lucassilvs.kafkaconsumerexemplo.transportlayer.models.AddressModel");
 
         return new DefaultKafkaConsumerFactory<>(properties);
     }

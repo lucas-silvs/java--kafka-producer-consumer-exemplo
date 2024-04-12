@@ -4,5 +4,14 @@ spring:
       value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       group-id: grupo-teste
+      properties:
+        spring:
+          deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+          json:
+            value.default.type: com.lucassilvs.kafkaconsumerexemplo.transportlayer.models.OrderModel
+            type.mapping: "address:com.lucassilvs.kafkaconsumerexemplo.transportlayer.models.AddressModel"
+
+
+
 
 
