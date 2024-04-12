@@ -1,4 +1,4 @@
-package com.lucassilvs.kafkaconsumerexemplo.models;
+package com.lucassilvs.kafkaconsumerexemplo.transportlayer.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

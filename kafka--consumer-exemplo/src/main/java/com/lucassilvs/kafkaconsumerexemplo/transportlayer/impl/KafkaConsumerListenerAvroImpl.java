@@ -1,4 +1,4 @@
-package com.lucassilvs.kafkaconsumerexemplo.controller.impl;
+package com.lucassilvs.kafkaconsumerexemplo.transportlayer.impl;
 
 import com.lucassilvs.kafkaproducerexemplo.gateways.kafka.UsuarioTesteAvro;
 import org.apache.kafka.clients.consumer.ConsumerRecord;

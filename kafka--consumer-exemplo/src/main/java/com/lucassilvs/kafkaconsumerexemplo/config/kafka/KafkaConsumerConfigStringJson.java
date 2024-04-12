@@ -1,6 +1,6 @@
 package com.lucassilvs.kafkaconsumerexemplo.config.kafka;
 
-import com.lucassilvs.kafkaconsumerexemplo.models.OrderModel;
+import com.lucassilvs.kafkaconsumerexemplo.transportlayer.models.OrderModel;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,7 +28,7 @@ public class KafkaConsumerConfigStringJson {
         Map<String, Object> properties = kafkaProperties.buildConsumerProperties(null);
         properties.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, JsonDeserializer.class.getName());
         properties.put(JsonDeserializer.VALUE_DEFAULT_TYPE, OrderModel.class.getName());
-        properties.put(JsonDeserializer.TYPE_MAPPINGS, "address:com.lucassilvs.kafkaconsumerexemplo.models.AddressModel");
+        properties.put(JsonDeserializer.TYPE_MAPPINGS, "address:com.lucassilvs.kafkaconsumerexemplo.transportlayer.models.AddressModel");
 
         return new DefaultKafkaConsumerFactory<>(properties);
     }

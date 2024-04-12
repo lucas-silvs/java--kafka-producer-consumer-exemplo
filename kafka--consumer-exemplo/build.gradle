@@ -27,6 +27,7 @@ dependencies {
 	implementation 'org.springframework.kafka:spring-kafka'
 	testImplementation 'org.springframework.kafka:spring-kafka-test'
 
+
 	//AVRO - Schema Registry
 	implementation 'io.confluent:kafka-avro-serializer:7.3.1'
 
@@ -34,6 +35,20 @@ dependencies {
 	implementation 'io.micrometer:micrometer-tracing-bridge-brave:1.2.2'
 	// metrics prometheus
 	implementation 'io.micrometer:micrometer-registry-prometheus:1.12.2'
+
+	// https://mvnrepository.com/artifact/com.github.derjust/spring-data-dynamodb
+	implementation 'com.github.derjust:spring-data-dynamodb:5.1.0'
+	implementation 'com.amazonaws:aws-java-sdk-dynamodb:1.12.699'
+	implementation 'org.springframework.data:spring-data-releasetrain:Neumann-SR9'
+
+
+
+	// https://mvnrepository.com/artifact/org.mapstruct/mapstruct
+	implementation 'org.mapstruct:mapstruct:1.5.5.Final'
+	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
+
+
+
 
 
 
