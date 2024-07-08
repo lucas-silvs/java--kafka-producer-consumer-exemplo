@@ -5,7 +5,7 @@ spring:
   application:
     name: java--kafka-producer-exemplo
   kafka:
-    bootstrap-servers: ${BOOTSTRAPS_SERVER:localhost:9092}
+    bootstrap-servers: ${BOOTSTRAPS_SERVER:localhost:9093}
     producer:
       client-id: ${spring.application.name}
       properties:

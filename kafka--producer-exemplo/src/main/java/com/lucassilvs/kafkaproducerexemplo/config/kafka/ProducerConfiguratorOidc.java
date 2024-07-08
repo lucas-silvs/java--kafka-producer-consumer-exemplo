@@ -16,7 +16,7 @@ import java.util.Map;
 
 @Profile("oidc")
 @Configuration
-public class ProducerConfigConfluentOIDCProviderAvro {
+public class ProducerConfiguratorOidc  implements KafkaPropertiesConfigurator{
 
     @Value("${spring.kafka.properties.basic.auth.user.info.username}")
     private String schemaRegistryUserinforUsername;
@@ -49,31 +49,11 @@ public class ProducerConfigConfluentOIDCProviderAvro {
 
 
 
-    @Bean
-    public ProducerFactory<String, SpecificRecord> producerFactory(final KafkaProperties kafkaProperties) {
-
-        Map<String, Object> props = kafkaProperties.buildProducerProperties(null);
-
+    @Override
+    public void configure(Map<String, Object> props) {
         props.put(SaslConfigs.SASL_JAAS_CONFIG,  String.format(OAUTHBEARER_JAAS_CONFIG, clientId, clientSecret, scope, clusterId, identityPool));
 
         //Autenticação Schema Registry
         props.put(AbstractKafkaSchemaSerDeConfig.USER_INFO_CONFIG, String.format("%s:%s",schemaRegistryUserinforUsername,schemaRegistryUserinforPassword));
-
-        return new DefaultKafkaProducerFactory<>(props);
     }
-
-    @Bean
-    public KafkaTemplate<String, SpecificRecord> kafkaTemplate(ProducerFactory<String, SpecificRecord> producerFactory) {
-        // inicializa o producer no start da aplicação
-        producerFactory.createProducer();
-
-        KafkaTemplate<String, SpecificRecord> kafkaTemplate = new KafkaTemplate<>(producerFactory);
-
-        // Habilita Tracing nas mensagens enviadas adicionando no header o traceparent
-        kafkaTemplate.setObservationEnabled(true);
-
-        return kafkaTemplate;
-    }
-
-
 }

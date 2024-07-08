@@ -7,4 +7,3 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       properties:
         schema.registry.url: ${SCHEMA_REGISTRY_URL:http://localhost:8081}
-        sasl.mechanism: SASL_PLAINTEXT

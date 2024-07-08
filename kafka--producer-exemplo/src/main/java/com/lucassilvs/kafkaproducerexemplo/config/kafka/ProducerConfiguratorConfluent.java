@@ -1,22 +1,16 @@
 package com.lucassilvs.kafkaproducerexemplo.config.kafka;
 
 import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig;
-import org.apache.avro.specific.SpecificRecord;
 import org.apache.kafka.common.config.SaslConfigs;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.kafka.core.DefaultKafkaProducerFactory;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.core.ProducerFactory;
 
 import java.util.Map;
 
 @Profile("confluent")
 @Configuration
-public class ProducerConfigConfluent {
+public class ProducerConfiguratorConfluent implements KafkaPropertiesConfigurator{
 
     @Value("${spring.kafka.properties.basic.auth.credentials.source}")
     private String schemaRegistryCredentialsSource;
@@ -35,10 +29,9 @@ public class ProducerConfigConfluent {
 
     private  static  final String SAAS_JAAS_CONFIG = "org.apache.kafka.common.security.plain.PlainLoginModule required username=\"%s\" password=\"%s\";";
 
-    @Bean
-    public ProducerFactory<String, SpecificRecord> producerFactory(final KafkaProperties kafkaProperties) {
 
-        Map<String, Object> props = kafkaProperties.buildProducerProperties(null);
+    @Override
+    public void configure(Map<String, Object> props) {
 
         //Autenticação Cluster Kafka
         props.put(SaslConfigs.SASL_JAAS_CONFIG, String.format(SAAS_JAAS_CONFIG, clusterCredentialsKey, clusterCredentialsPassword));
@@ -47,20 +40,5 @@ public class ProducerConfigConfluent {
         props.put(AbstractKafkaSchemaSerDeConfig.USER_INFO_CONFIG, String.format("%s:%s",schemaRegistryUserinforUsername,schemaRegistryUserinforPassword));
         props.put(AbstractKafkaSchemaSerDeConfig.BASIC_AUTH_CREDENTIALS_SOURCE, schemaRegistryCredentialsSource);
 
-        return new DefaultKafkaProducerFactory<>(props);
     }
-
-    @Bean
-    public KafkaTemplate<String, SpecificRecord> kafkaTemplate(ProducerFactory<String, SpecificRecord> producerFactory) {
-        // inicializa o producer no start da aplicação
-        producerFactory.createProducer();
-
-        KafkaTemplate<String, SpecificRecord> kafkaTemplate = new KafkaTemplate<>(producerFactory);
-
-        // Habilita Tracing nas mensagens enviadas adicionando no header o traceparent
-        kafkaTemplate.setObservationEnabled(true);
-        return kafkaTemplate;
-    }
-
-
 }
