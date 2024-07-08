@@ -1,16 +1,10 @@
 package com.lucassilvs.kafkaproducerexemplo.config.kafka;
 
 import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig;
-import org.apache.avro.specific.SpecificRecord;
 import org.apache.kafka.common.config.SaslConfigs;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.kafka.core.DefaultKafkaProducerFactory;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.core.ProducerFactory;
 
 import java.util.Map;
 
@@ -37,7 +31,7 @@ public class ProducerConfiguratorOidc  implements KafkaPropertiesConfigurator{
     @Value("${spring.kafka.properties.sasl.clientSecret}")
     private String clientSecret;
 
-    @Value("${spring.kafka.properties.sasl.scope}")
+    @Value("${extension.scope}")
     private String scope;
 
     private  static  final String OAUTHBEARER_JAAS_CONFIG = "org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginModule required " +

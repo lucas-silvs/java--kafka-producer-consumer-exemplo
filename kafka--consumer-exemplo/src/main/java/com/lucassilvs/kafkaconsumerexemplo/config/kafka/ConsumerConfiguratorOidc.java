@@ -31,7 +31,7 @@ public class ConsumerConfiguratorOidc implements KafkaPropertiesConfigurator {
     @Value("${spring.kafka.properties.sasl.clientSecret}")
     private String clientSecret;
 
-    @Value("${spring.kafka.properties.sasl.scope}")
+    @Value("${extension.scope}")
     private String scope;
 
     private  static  final String OAUTHBEARER_JAAS_CONFIG = "org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginModule required " +

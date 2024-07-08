@@ -3,37 +3,31 @@ spring:
     nome-topico: topico--teste
 
 
-    consumer:
-      bootstrap-servers: ${URL_BOOTSTRAP_SERVER:localhost:9092}
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+    properties:
+      basic:
+        auth:
+          credentials:
+            source: USER_INFO
+          user:
+            info:
+              username: ${SR_SECRET_KEY}
+              password: ${SR_SECRET_VALUE}
+      sasl:
+        mechanism: OAUTHBEARER
+        login:
+          callback:
+            handler:
+              class: "org.apache.kafka.common.security.oauthbearer.secured.OAuthBearerLoginCallbackHandler"
+        oauthbearer:
+          token:
+            endpoint:
+              url: ${OIDC_TOKEN_ENDPOINT}
 
-      properties:
-        schema.registry.url: ${SCHEMA_REGISTRY_URL:http://localhost:8081}
-        basic:
-          auth:
-            credentials:
-              source: USER_INFO
-            user:
-              info:
-                username: ${SR_SECRET_KEY}
-                password: ${SR_SECRET_VALUE}
-        sasl:
-          mechanism: OAUTHBEARER
-          login:
-            callback:
-              handler:
-                class: "org.apache.kafka.common.security.oauthbearer.secured.OAuthBearerLoginCallbackHandler"
-          oauthbearer:
-            token:
-              endpoint:
-                url: ${OIDC_TOKEN_ENDPOINT}
-
-          jaas:
-          clientId: ${OIDC_CLIENT_ID}
-          clientSecret: ${OIDC_CLIENT_SECRET}
-        security:
-          protocol: SASL_SSL
+        jaas:
+        clientId: ${OIDC_CLIENT_ID}
+        clientSecret: ${OIDC_CLIENT_SECRET}
+      security:
+        protocol: SASL_SSL
 
 
 
