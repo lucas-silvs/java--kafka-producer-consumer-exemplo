@@ -1,6 +1,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: kafka
+
   annotations:
     kompose.cmd: kompose convert -f docker-compose.yaml
     kompose.version: 1.31.2 (a92241f79)
@@ -26,14 +28,27 @@ spec:
     spec:
       containers:
         - env:
-            - name: KAFKA_REST_BOOTSTRAP_SERVERS
-              value: broker.default.svc.cluster.local:29092
+            # - name: KAFKA_REST_BOOTSTRAP_SERVERS
+            #   value: broker.default.svc.cluster.local:29092
             - name: KAFKA_REST_HOST_NAME
               value: rest-proxy
             - name: KAFKA_REST_LISTENERS
               value: http://0.0.0.0:8082
             - name: KAFKA_REST_SCHEMA_REGISTRY_URL
-              value: http://schema-registry-service.default.svc.cluster.local:8081
+              value: http://schema-registry-service.kafka.svc.cluster.local:8081
+
+            #PLAIN AUTH
+
+            - name: KAFKA_REST_BOOTSTRAP_SERVERS
+              value: "SASL_PLAINTEXT://broker.kafka.svc.cluster.local:29092"
+            - name: KAFKA_REST_CLIENT_SECURITY_PROTOCOL
+              value: "PLAINTEXT"
+            - name: KAFKA_REST_CLIENT_SASL_MECHANISM
+              value: "PLAINTEXT"  
+            - name: KAFKA_REST_CLIENT_SASL_JAAS_CONFIG
+              value: "org.apache.kafka.common.security.plain.PlainLoginModule required username='admin' password='admin-secret';"
+            - name: KAFKA_REST_LISTENERS
+              value: "http://0.0.0.0:8082"
           image: confluentinc/cp-kafka-rest:7.5.0
           name: rest-proxy
           ports:
@@ -41,6 +56,29 @@ spec:
               hostPort: 8082
               protocol: TCP
           resources: {}
+
+          volumeMounts:
+            - name: rest-proxy-config
+              mountPath: /etc/kafka
+      volumes:
+        - name: rest-proxy-config
+          configMap:
+            name: rest-proxy-config
+      restartPolicy: Always
+
       hostname: rest-proxy
       restartPolicy: Always
 status: {}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: kafka
+  name: rest-proxy-config
+data:
+  rest-proxy_jaas.conf: |
+    KafkaClient {
+      org.apache.kafka.common.security.plain.PlainLoginModule required
+      username="admin"
+      password="admin-secret";
+    };

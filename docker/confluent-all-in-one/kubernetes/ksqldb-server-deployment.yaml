@@ -1,6 +1,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: kafka
+
   annotations:
     kompose.cmd: kompose convert -f docker-compose.yaml
     kompose.version: 1.31.2 (a92241f79)
@@ -27,7 +29,7 @@ spec:
       containers:
         - env:
             - name: KSQL_BOOTSTRAP_SERVERS
-              value: broker:29092
+              value: broker.kafka.svc.cluster.local:29092
             - name: KSQL_CACHE_MAX_BYTES_BUFFERING
               value: "0"
             - name: KSQL_CONFIG_DIR
@@ -37,7 +39,7 @@ spec:
             - name: KSQL_HOST_NAME
               value: ksqldb-server
             - name: KSQL_KSQL_CONNECT_URL
-              value: http://connect.default.svc.cluster.local:8083
+              value: http://connect.kafka.svc.cluster.local:8083
             - name: KSQL_KSQL_LOGGING_PROCESSING_STREAM_AUTO_CREATE
               value: "true"
             - name: KSQL_KSQL_LOGGING_PROCESSING_TOPIC_AUTO_CREATE
@@ -45,7 +47,7 @@ spec:
             - name: KSQL_KSQL_LOGGING_PROCESSING_TOPIC_REPLICATION_FACTOR
               value: "1"
             - name: KSQL_KSQL_SCHEMA_REGISTRY_URL
-              value: http://schema-registry-service.default.svc.cluster.local:8081
+              value: http://schema-registry-service.kafka.svc.cluster.local:8081
             - name: KSQL_LISTENERS
               value: http://0.0.0.0:8088
             - name: KSQL_PRODUCER_INTERCEPTOR_CLASSES

@@ -1,6 +1,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: kafka
+
   annotations:
     kompose.cmd: kompose convert -f docker-compose.yaml
     kompose.version: 1.31.2 (a92241f79)
@@ -28,14 +30,14 @@ spec:
         - args:
             - bash
             - -c
-            - echo Waiting for Kafka to be ready... && cub kafka-ready -b broker.default.svc.cluster.local:29092 1 40 && echo Waiting for Confluent Schema Registry to be ready... && cub sr-ready schema-registry-service.default.svc.cluster.local 8081 40 && echo Waiting a few seconds for topic creation to finish... && sleep 11 && tail -f /dev/null
+            - echo Waiting for Kafka to be ready... && cub kafka-ready -b broker.kafka.svc.cluster.local:29092 1 40 && echo Waiting for Confluent Schema Registry to be ready... && cub sr-ready schema-registry-service.kafka.svc.cluster.local 8081 40 && echo Waiting a few seconds for topic creation to finish... && sleep 11 && tail -f /dev/null
           env:
             - name: KSQL_CONFIG_DIR
               value: /etc/ksql
             - name: STREAMS_BOOTSTRAP_SERVERS
-              value: broker.default.svc.cluster.local:29092
+              value: broker.kafka.svc.cluster.local:29092
             - name: STREAMS_SCHEMA_REGISTRY_HOST
-              value: schema-registry-service.default.svc.cluster.local
+              value: schema-registry-service.kafka.svc.cluster.local
             - name: STREAMS_SCHEMA_REGISTRY_PORT
               value: "8081"
           image: confluentinc/ksqldb-examples:7.5.0
