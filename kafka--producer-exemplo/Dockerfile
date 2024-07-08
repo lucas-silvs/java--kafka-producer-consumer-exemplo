@@ -1,10 +1,10 @@
-FROM gradle:7.5.1-jdk17 AS build
+FROM gradle:8.8 AS build
 COPY --chown=gradle:gradle . /home/gradle/src
 WORKDIR /home/gradle/src
 RUN gradle clean build --no-daemon
 
 
-FROM amazoncorretto:17.0.9-alpine
+FROM amazoncorretto:21.0.3
 
 LABEL "author"="Lucas Santos"
 LABEL "email"="lucas.parkl@outlook.com"
