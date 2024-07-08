@@ -1,13 +1,9 @@
 package com.lucassilvs.kafkaproducerexemplo.config.kafka;
 
-import org.apache.kafka.clients.admin.AdminClient;
-import org.apache.kafka.clients.admin.AdminClientConfig;
-import org.apache.kafka.clients.admin.KafkaAdminClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaAdmin;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -57,7 +53,6 @@ public class ProducerConfig {
         for (KafkaPropertiesConfigurator configurator : configurators) {
             configurator.configure(props);
         }
-
 
         return  new KafkaAdmin(props);
 
