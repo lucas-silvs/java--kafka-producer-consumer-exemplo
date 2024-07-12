@@ -26,8 +26,13 @@ spring:
             token:
               endpoint:
                 url: ${OIDC_TOKEN_ENDPOINT}
+
+          jaas:
+          clientId: ${OIDC_CLIENT_ID}
+          clientSecret: ${OIDC_CLIENT_SECRET}
         security:
           protocol: SASL_SSL
+
 
 
 extension:

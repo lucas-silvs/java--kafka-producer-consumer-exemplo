@@ -1,6 +1,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: kafka
+
   annotations:
     kompose.cmd: kompose convert -f docker-compose.yaml
     kompose.version: 1.31.2 (a92241f79)
@@ -30,13 +32,39 @@ spec:
               value: "2181"
             - name: ZOOKEEPER_TICK_TIME
               value: "2000"
+            - name: KAFKA_OPTS
+              value: "-Djava.security.auth.login.config=/opt/zookeeper/config/jaas.conf"
           image: confluentinc/cp-zookeeper:7.5.0
           name: zookeeper
           ports:
             - containerPort: 2181
               hostPort: 2181
               protocol: TCP
-          resources: {}
+          volumeMounts:
+            - name: zookeeper-config
+              mountPath: /opt/zookeeper/config
+      volumes:
+        - name: zookeeper-config
+          configMap:
+            name: zookeeper-config
       hostname: zookeeper
       restartPolicy: Always
 status: {}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: zookeeper-config
+  namespace: kafka
+
+data:
+  jaas.conf: |
+    Server {
+      org.apache.zookeeper.server.auth.DigestLoginModule required
+      user_admin="admin-secret";
+    };
+    Client {
+      org.apache.zookeeper.client.ZooKeeperSaslClient required
+      username="admin"
+      password="admin-secret";
+    };

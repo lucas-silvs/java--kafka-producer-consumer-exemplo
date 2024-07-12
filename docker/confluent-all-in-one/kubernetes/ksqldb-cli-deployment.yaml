@@ -1,6 +1,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: kafka
+
   annotations:
     kompose.cmd: kompose convert -f docker-compose.yaml
     kompose.version: 1.31.2 (a92241f79)

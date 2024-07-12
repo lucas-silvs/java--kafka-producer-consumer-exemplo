@@ -11,7 +11,7 @@ spec:
     #  Configuração para configuração de trigger utilizando lag de consumer Kafka
     - type: kafka
       metadata:
-        bootstrapServers: broker.default.svc.cluster.local:29092
+        bootstrapServers: broker.kafka.svc.cluster.local:9094
         consumerGroup: consumer-teste
         topic: topico-teste-avro
         # Optional

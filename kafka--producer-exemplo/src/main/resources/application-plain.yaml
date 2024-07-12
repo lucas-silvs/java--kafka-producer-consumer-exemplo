@@ -1,12 +1,11 @@
 spring:
   kafka:
-    producer:
-      security:
-        protocol: SASL_PLAINTEXT
-      properties:
-        sasl:
-            mechanism: PLAIN
+    security:
+      protocol: SASL_PLAINTEXT
+    properties:
+      sasl:
+          mechanism: PLAIN
 
-        plain:
-          username: ${CLUSTER_API_KEY}
-          password: ${CLUSTER_API_VALUE}
+      plain:
+        username: ${CLUSTER_API_KEY}
+        password: ${CLUSTER_API_VALUE}

@@ -1,53 +1,34 @@
-# --- Depreciado será usado o KEDA para escalar com CPU e lag do Kafka
-#apiVersion: autoscaling/v2
-#kind: HorizontalPodAutoscaler
-#metadata:
-#  name: consumer-hpa
-#  namespace: consumer
-#  labels:
-#    app: consumer
-#spec:
-#  scaleTargetRef:
-#    apiVersion: apps/v1
-#    kind: Deployment
-#    name: consumer-deployment
-#  minReplicas: 1
-#  maxReplicas: 3
-#  metrics:
-#    - type: Resource
-#      resource:
-#        name: cpu
-#        target:
-#          type: Utilization
-#          averageUtilization: 50
-
 apiVersion: keda.sh/v1alpha1
 kind: ScaledObject
 metadata:
   name: kafka-keda-consumer-trigger
   namespace: consumer
 spec:
-  minReplicaCount: 2  # Defina aqui o número mínimo de réplicas desejado
-  maxReplicaCount: 6  # Defina aqui o número máximo de réplicas desejado
+  minReplicaCount: 2 # Defina aqui o número mínimo de réplicas desejado
+  maxReplicaCount: 6 # Defina aqui o número máximo de réplicas desejado
 
   scaleTargetRef:
     name: consumer-deployment
-  pollingInterval: 30
+  pollingInterval: 3
   triggers:
     #  Configuração para configuração de trigger utilizando lag de consumer Kafka
     - type: kafka
       metadata:
-        bootstrapServers: broker.default.svc.cluster.local:29092
-        consumerGroup: consumer-teste
-        topic: topico-teste-avro
-        # Optional
-        lagThreshold: "10"
-        offsetResetPolicy: latest
+        bootstrapServers: broker.kafka.svc.cluster.local:9093
+        consumerGroup: consumer-teste # Consumer group que será monitorado
+        topic: topico-teste-avro # Tópico que será monitorado
+        lagThreshold: "3" # Limite de lag para iniciar a escala
+        offsetResetPolicy: latest # Política de reset de offset
+        sasl: plaintext # Configuração de autenticação
 
+      # Configuração para utilizar objeto de autenticação do tipo ClusterTriggerAuthentication (que contem valor do AWS Secret Manager)
+      # Esse artefato disponibiliza os campos "username" e "password" para autenticação
+      authenticationRef:
+        name: kafka-trigger-auth-aws-secret-manager
+        kind: ClusterTriggerAuthentication
+
+    #  Configuração para configuração de trigger utilizando porcentagem de utilização do CPU
     - type: cpu
-      metricType: Utilization # Allowed types are 'Utilization' or 'AverageValue'
+      metricType: Utilization
       metadata:
-        #      type: Utilization # Deprecated in favor of trigger.metricType; allowed types are 'Utilization' or 'AverageValue'
-        value: "60"
-
-
+        value: "60" #valor é calculado em porcentagem

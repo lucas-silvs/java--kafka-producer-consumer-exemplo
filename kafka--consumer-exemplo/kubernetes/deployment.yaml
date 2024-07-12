@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: consumer-deployment
-          image: localhost:32000/consumer-teste:1.1.0
+          image: localhost:32000/consumer-teste:1.0.0
           readinessProbe:
             httpGet:
               path: actuator/health

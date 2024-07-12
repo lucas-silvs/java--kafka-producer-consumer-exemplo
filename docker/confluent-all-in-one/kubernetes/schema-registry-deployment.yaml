@@ -1,6 +1,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: kafka
+
   annotations:
     kompose.cmd: kompose convert -f docker-compose.yaml
     kompose.version: 1.31.2 (a92241f79)
@@ -27,14 +29,15 @@ spec:
       containers:
         - env:
           - name: SCHEMA_REGISTRY_HOST_NAME
-            value: schema-registry.default.svc.cluster.local
+            value: schema-registry.kafka.svc.cluster.local
           - name: SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL
-            value: zookeeper.default.svc.cluster.local:2181
+            value: zookeeper.kafka.svc.cluster.local:2181
           - name: SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS
-            value: broker.default.svc.cluster.local:29092
+            value: broker.kafka.svc.cluster.local:29092
             # value: zookeeper:2181
           - name: SCHEMA_REGISTRY_LISTENERS
             value: http://0.0.0.0:8081
+
           image: confluentinc/cp-schema-registry:7.5.0
           name: schema-registry
           ports:
