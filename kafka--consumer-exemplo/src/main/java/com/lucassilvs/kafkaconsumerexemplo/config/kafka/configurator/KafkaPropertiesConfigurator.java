@@ -1,4 +1,4 @@
-package com.lucassilvs.kafkaconsumerexemplo.config.kafka;
+package com.lucassilvs.kafkaconsumerexemplo.config.kafka.configurator;
 
 import java.util.Map;
 
