@@ -1,4 +1,4 @@
-package com.lucassilvs.kafkaconsumerexemplo.config.kafka;
+package com.lucassilvs.kafkaconsumerexemplo.config.kafka.configurator;
 
 import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig;
 import org.apache.kafka.common.config.SaslConfigs;
@@ -10,7 +10,7 @@ import java.util.Map;
 
 @Profile("oidc")
 @Configuration
-public class ConsumerConfiguratorOidc implements KafkaPropertiesConfigurator {
+public class ConfiguratorOidc implements KafkaPropertiesConfigurator {
 
     @Value("${spring.kafka.properties.basic.auth.user.info.username}")
     private String schemaRegistryUserinforUsername;

@@ -1,4 +1,4 @@
-package com.lucassilvs.kafkaproducerexemplo.config.kafka;
+package com.lucassilvs.kafkaconsumerexemplo.config.kafka.configurator;
 
 import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig;
 import org.apache.kafka.common.config.SaslConfigs;
@@ -10,7 +10,7 @@ import java.util.Map;
 
 @Profile("confluent")
 @Configuration
-public class ProducerConfiguratorConfluent implements KafkaPropertiesConfigurator{
+public class ConfiguratorConfluent implements KafkaPropertiesConfigurator {
 
     @Value("${spring.kafka.properties.basic.auth.credentials.source}")
     private String schemaRegistryCredentialsSource;

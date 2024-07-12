@@ -1,6 +1,7 @@
 package com.lucassilvs.kafkaconsumerexemplo.config.kafka;
 
 
+import com.lucassilvs.kafkaconsumerexemplo.config.kafka.configurator.KafkaPropertiesConfigurator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
