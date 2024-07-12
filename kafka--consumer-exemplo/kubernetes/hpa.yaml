@@ -4,8 +4,8 @@ metadata:
   name: kafka-keda-consumer-trigger
   namespace: consumer
 spec:
-  minReplicaCount: 2  # Defina aqui o número mínimo de réplicas desejado
-  maxReplicaCount: 6  # Defina aqui o número máximo de réplicas desejadp
+  minReplicaCount: 2 # Defina aqui o número mínimo de réplicas desejado
+  maxReplicaCount: 6 # Defina aqui o número máximo de réplicas desejado
 
   scaleTargetRef:
     name: consumer-deployment
@@ -15,19 +15,20 @@ spec:
     - type: kafka
       metadata:
         bootstrapServers: broker.kafka.svc.cluster.local:9093
-        consumerGroup: consumer-teste
-        topic: topico-teste-avro
-        lagThreshold: "3"
-        offsetResetPolicy: latest
+        consumerGroup: consumer-teste # Consumer group que será monitorado
+        topic: topico-teste-avro # Tópico que será monitorado
+        lagThreshold: "3" # Limite de lag para iniciar a escala
+        offsetResetPolicy: latest # Política de reset de offset
+        sasl: plaintext # Configuração de autenticação
 
-        sasl: plaintext
+      # Configuração para utilizar objeto de autenticação do tipo ClusterTriggerAuthentication (que contem valor do AWS Secret Manager)
+      # Esse artefato disponibiliza os campos "username" e "password" para autenticação
       authenticationRef:
         name: kafka-trigger-auth-aws-secret-manager
-        #name: keda-trigger-auth-kafka-credential-no-aws - no aws secret
+        kind: ClusterTriggerAuthentication
 
-    # - type: cpu
-    #   metricType: Utilization # Allowed types are 'Utilization' or 'AverageValue'
-    #   metadata:
-    #     #      type: Utilization # Deprecated in favor of trigger.metricType; allowed types are 'Utilization' or 'AverageValue'
-    #     value: "60"
-  
+    #  Configuração para configuração de trigger utilizando porcentagem de utilização do CPU
+    - type: cpu
+      metricType: Utilization
+      metadata:
+        value: "60" #valor é calculado em porcentagem

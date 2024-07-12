@@ -26,9 +26,9 @@ Projeto desenvolvido utilizando Java 17 e Spring boot 3 utilizando Kafka com um 
 
 ## Requisitos
 
-- Java 17
-- Spring 3.2.2
-- Gradle 7.6
+- Java 21
+- Spring 3.3.1
+- Gradle 8.8
 - Kafka 3.5.0
 - Docker
 - Kubernetes (opcional)
@@ -281,20 +281,163 @@ pelo ScaledObject do KEDA, que pode ser visto no arquivo `hpa.yaml` na pasta `ku
 No arquivo contem o exemplo de implementação com HPA e com o ScaledObject do KEDA, onde está escalando com memoria e cpu, e para o consumer inclui
 a metrica do lag do consumer.
 
-Primeiro, é necessário instalar o KEDA no cluster Kubernetes, para isso, execute o comando abaixo:
 
+### Configurando ambiente do KEDA
+com o KEDA instado, agora será configurado a configuração de autenticaçao do KEDA com o Kafka,
+para isso será necessário disponibilizar as credenciais do cluster Kafka.
+
+Neste estudo foi utilizado o AWS Secret Manager para armazenar as credenciais, e o External secret Operator para disponibilizar
+as credenciais para o Keda
+
+Para isso, siga o procedimento abaixo:
+
+1. Instale o KEDA + External Secret Operator com o comando abaixo:
 ```sh
-# Via Microk8s
+
+# instalar o KEDA
+
+## Via Microk8s
 microk8s enable keda
 
-# Via Helm
+## Via Helm
 helm repo add kedacore https://kedacore.github.io/charts
 helm repo update
 helm install keda kedacore/keda --namespace keda --create-namespace
+
+# instalar o External Secret Operator
+
+## Via Healm
+helm repo add external-secrets https://charts.external-secrets.io
+helm install external-secrets \                                  
+   external-secrets/external-secrets \
+    -n external-secrets \
+    --create-namespace
 ```
 
-após aplicar, ao realizar o deploy da aplicação, será aplicado junto o Trigger do KEDA, que irá monitorar o lag do consumer e irá escalar
-baseado no lag.
+2. Com os plugins instalados, devemos configurar as credenciais da AWS para o External Secret Operator. Para isso, ajuste o arquivo `aws-secret.yaml` na pasta `kubernetes/keda/aws/` do projeto producer e consumer, com as credenciais de um usuario IAM (AWS acess key e AWS secret key id).
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: keda-aws-credential-secret
+  namespace: external-secrets
+
+type: Opaque
+data:
+  AWS_ACCESS_KEY_ID: <base64-encoded> # echo -n "AWS_ACCES_KEY_ID" | base64
+  AWS_SECRET_ACCESS_KEY: <base64-encoded> # echo -n "AWS_SECRET_ACCESS_KEY" | base64
+```
+3. Com as credenciais configuradas, agora iremos ajustar o artefato que irá obter criar o cliente AWS para o External Operator, utilizando a secret criada na etapa 2.
+````yaml
+apiVersion: external-secrets.io/v1beta1
+kind: ClusterSecretStore
+metadata:
+  name: aws-secretsmanager
+spec:
+  provider:
+    aws:
+      service: SecretsManager
+      region: us-east-1
+      auth:
+        secretRef:
+          accessKeyIDSecretRef:
+            name: keda-aws-credential-secret #nome dos kubernetes secrets com as credenciais
+            namespace: external-secrets
+            key: AWS_ACCESS_KEY_ID # nome do campo da credencial access-key no kubernetes secret
+          secretAccessKeySecretRef:
+            name: keda-aws-credential-secret #nome dos kubernetes secrets com as credenciais
+            namespace: external-secrets
+            key: AWS_SECRET_ACCESS_KEY # nome do campo da credencial access-key no kubernetes secret
+````
+
+4. Agora devemos criar o artefato obter o valor da secret na aws e criar o Kubernetes secret com o valor da secret da AWS.
+```yaml
+apiVersion: external-secrets.io/v1beta1
+kind: ClusterExternalSecret
+metadata:
+  name: cluster-keda-credentials-external-secret
+spec:
+  namespaceSelector:
+    # Validação para quais namespace será criada o Kubernetes Secrets
+    matchLabels:
+      name: "keda"
+  externalSecretName: "keda-secret" # nome do Kubernetes Secrets que será criado
+  externalSecretSpec:
+    refreshInterval: "1h" # Intervalo que a secret será consultada novamente na AWS
+    secretStoreRef:
+      name: aws-secretsmanager
+      kind: ClusterSecretStore
+    target:
+      name: keda-credentials
+      creationPolicy: Owner
+    data:
+      - secretKey: username # nome do campo no Kubernetes Secrets
+        remoteRef:
+          key: "k8s/kafka/keda-user" # nome da secret na AWS
+          property: username # nome do campo na Secret na AWS
+      - secretKey: password # nome do campo no Kubernetes Secrets
+        remoteRef:
+          key: "k8s/kafka/keda-user" # nome da secret na AWS
+          property: password # nome do campo na Secret na AWS
+
+```
+5. Pronto, agora será necessário configurar o KEDA para usar esse Kubernetes Secret para se conectar com o Kafka, primeiro devemos configurar o artefato do KEDA que irá mapear a secret para o uso no Trigger do Keda:
+```yaml
+apiVersion: keda.sh/v1alpha1
+kind: ClusterTriggerAuthentication
+metadata:
+  name: kafka-trigger-auth-aws-secret-manager
+spec:
+  secretTargetRef:
+    - parameter: username # nome do campo de autenticação que o KEDA irá usar
+      name: keda-credentials # nome do Kubernetes secrets
+      key: username # nome do campo no Kubernetes Secrets
+    - parameter: password  nome do campo de autenticação que o KEDA irá usar
+      name: keda-credentials # nome do Kubernetes secrets
+      key: password # nome do campo no Kubernetes Secrets
+```
+
+6. Agora basta somente configurar o Trigger do Keda, utilizando o Cluster Trigger Authentication criado na etapa 5:
+````yaml
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: kafka-keda-consumer-trigger
+  namespace: consumer
+spec:
+  minReplicaCount: 2 # Defina aqui o número mínimo de réplicas desejado
+  maxReplicaCount: 6 # Defina aqui o número máximo de réplicas desejado
+
+  scaleTargetRef:
+    name: consumer-deployment
+  pollingInterval: 3
+  triggers:
+    #  Configuração para configuração de trigger utilizando lag de consumer Kafka
+    - type: kafka
+      metadata:
+        bootstrapServers: broker.kafka.svc.cluster.local:9093
+        consumerGroup: consumer-teste # Consumer group que será monitorado
+        topic: topico-teste-avro # Tópico que será monitorado
+        lagThreshold: "3" # Limite de lag para iniciar a escala
+        offsetResetPolicy: latest # Política de reset de offset
+        sasl: plaintext # Configuração de autenticação
+
+      # Configuração para utilizar objeto de autenticação do tipo ClusterTriggerAuthentication (que contem valor do AWS Secret Manager)
+      # Esse artefato disponibiliza os campos "username" e "password" para autenticação
+      authenticationRef:
+        name: kafka-trigger-auth-aws-secret-manager
+        kind: ClusterTriggerAuthentication
+
+    #  Configuração para configuração de trigger utilizando porcentagem de utilização do CPU
+    - type: cpu
+      metricType: Utilization
+      metadata:
+        value: "60" #valor é calculado em porcentagem
+````
+
+Após aplicar o artefato de Trigger junto com o Deploy da aplicação, a aplicação passará a escalar a partir do lag do tópico Kafka e do consumo de CPU
+
+
 Para simular um lag no consumer, altere a variavel `ENABLE_MOCK_LAG` para `true` no arquivo `configMap.yaml` na pasta `kubernetes/` do projeto consumer.
 Com isso ao produzir as mensagens com o consumer, o consumer irá aguardar 30 segundos antes de consumir a mensagem, simulando um lag.
 
