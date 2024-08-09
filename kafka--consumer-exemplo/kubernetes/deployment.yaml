@@ -14,9 +14,10 @@ spec:
       labels:
         app: consumer-deployment
     spec:
+      automountServiceAccountToken: false
       containers:
         - name: consumer-deployment
-          image: localhost:32000/consumer-teste:1.0.0
+          image: localhost:32000/consumer-teste:1.1.0
           readinessProbe:
             httpGet:
               path: actuator/health
@@ -33,11 +34,11 @@ spec:
             timeoutSeconds: 2
           resources:
             requests:
-              memory: "250Mi"
-              cpu: "200m"
+              memory: "350Mi"
+              cpu: "400m"
             limits:
-              memory: "250Mi"
-              cpu: "200m"
+              memory: "350Mi"
+              cpu: "400m"
           envFrom:
             - configMapRef:
                 name: consumer-cm
