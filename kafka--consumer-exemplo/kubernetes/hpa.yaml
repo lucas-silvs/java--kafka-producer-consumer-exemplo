@@ -25,7 +25,7 @@ spec:
             - type: Pods
               value: 5  # Redução fixa em número de pods (5 pods a cada período especificado)
               periodSeconds: 60  # Intervalo de tempo em segundos para aplicar a política de redução de 5 pods
-          selectPolicy: Max  # Política selecionada para scale down será a que provoca a maior redução (Max)
+          selectPolicy: Min  # Política selecionada para scale down será a que provoca a maior redução (Max)
 
         scaleUp:
           stabilizationWindowSeconds: 100  # Tempo que o HPA/KEDA esperará antes de escalar para cima após um trigger de scale up (300 segundos)
