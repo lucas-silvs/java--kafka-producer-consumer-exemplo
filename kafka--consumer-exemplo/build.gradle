@@ -1,8 +1,54 @@
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath 'com.google.protobuf:protobuf-gradle-plugin:0.9.4'
+		classpath 'com.github.davidmc24.gradle.plugin:gradle-avro-plugin:1.9.1'
+	}
+}
 plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.3.1'
 	id 'io.spring.dependency-management' version '1.1.5'
-	id "com.github.davidmc24.gradle.plugin.avro" version "1.9.1"
+}
+
+//validar se existe arquivos .proto
+def protoDir = file("${projectDir}/src/main/proto")
+
+if (protoDir.exists() && protoDir.listFiles().any { it.name.endsWith('.proto') }) {
+	logger.info("--------------------------")
+	logger.info("Compilando arquivos .proto")
+	logger.info("--------------------------")
+
+	apply plugin: 'com.google.protobuf'
+	protobuf {
+		protoc {
+			artifact = "com.google.protobuf:protoc:3.0.0"
+		}
+	}
+
+} else {
+	logger.warn("--------------------------")
+	logger.warn("Diretório de arquivos .proto não encontrado ou vazio. Ignorando compilação do protobuf.")
+	logger.warn("--------------------------")
+}
+
+//validar se existe arquivos .avsc
+def avroDir = file("${projectDir}/src/main/avro")
+
+if (avroDir.exists() && avroDir.listFiles().any { it.name.endsWith('.avsc') }) {
+	logger.info("--------------------------")
+	logger.info("Compilando arquivos .avsc")
+	logger.info("--------------------------")
+
+	apply plugin: 'com.github.davidmc24.gradle.plugin.avro'
+
+} else {
+	logger.warn("--------------------------")
+	logger.warn("Diretório de arquivos .avsc não encontrado ou vazio. Ignorando compilação do avro.")
+	logger.warn("--------------------------")
+
 }
 
 group = 'com.lucassilvs'
@@ -29,6 +75,9 @@ dependencies {
 
 	//AVRO - Schema Registry
 	implementation 'io.confluent:kafka-avro-serializer:7.6.1'
+
+	//PROTOBUF - Schema Registry
+	implementation 'io.confluent:kafka-protobuf-serializer:7.6.1'
 
 	// Kafka Tracing
 	implementation 'io.micrometer:micrometer-tracing-bridge-brave:1.3.1'

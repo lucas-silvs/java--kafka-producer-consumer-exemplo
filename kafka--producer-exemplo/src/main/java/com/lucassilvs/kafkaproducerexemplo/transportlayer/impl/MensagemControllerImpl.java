@@ -1,9 +1,9 @@
-package com.lucassilvs.kafkaproducerexemplo.controller.impl;
+package com.lucassilvs.kafkaproducerexemplo.transportlayer.impl;
 
 
-import com.lucassilvs.kafkaproducerexemplo.controller.MensagemController;
-import com.lucassilvs.kafkaproducerexemplo.models.request.MensagemRequest;
-import com.lucassilvs.kafkaproducerexemplo.service.MensagemService;
+import com.lucassilvs.kafkaproducerexemplo.transportlayer.MensagemController;
+import com.lucassilvs.kafkaproducerexemplo.transportlayer.models.MensagemRequest;
+import com.lucassilvs.kafkaproducerexemplo.interactors.MensagemUseCase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,16 +14,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/mensagem")
 public class MensagemControllerImpl  implements MensagemController {
 
-    private final MensagemService mensagemService;
+    private final MensagemUseCase mensagemUseCase;
 
     @Autowired
-    public MensagemControllerImpl(MensagemService mensagemService) {
-        this.mensagemService = mensagemService;
+    public MensagemControllerImpl(MensagemUseCase mensagemUseCase) {
+        this.mensagemUseCase = mensagemUseCase;
     }
 
     @PostMapping
     public ResponseEntity<Object> postarMensagem(MensagemRequest mensagem) {
-        mensagemService.postarMensagem(mensagem);
+        mensagemUseCase.postarMensagem(mensagem);
         return ResponseEntity.ok("Mensagem postada com sucesso");
     }
 }

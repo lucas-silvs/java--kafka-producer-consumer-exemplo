@@ -1,8 +1,8 @@
-package com.lucassilvs.kafkaproducerexemplo.models.request;
+package com.lucassilvs.kafkaproducerexemplo.transportlayer.models;
 
 
 public class MensagemRequest {
-    private String mensagem;
+    private String mensagem = "teste";
 
     private String saldo = "1000";
 

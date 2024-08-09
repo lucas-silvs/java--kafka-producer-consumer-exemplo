@@ -1,6 +1,6 @@
-package com.lucassilvs.kafkaproducerexemplo.controller;
+package com.lucassilvs.kafkaproducerexemplo.transportlayer;
 
-import com.lucassilvs.kafkaproducerexemplo.models.request.MensagemRequest;
+import com.lucassilvs.kafkaproducerexemplo.transportlayer.models.MensagemRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 

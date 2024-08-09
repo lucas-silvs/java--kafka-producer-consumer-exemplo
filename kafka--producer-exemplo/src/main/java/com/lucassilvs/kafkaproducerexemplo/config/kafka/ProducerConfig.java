@@ -1,5 +1,6 @@
 package com.lucassilvs.kafkaproducerexemplo.config.kafka;
 
+import org.apache.kafka.clients.producer.RoundRobinPartitioner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
@@ -27,6 +28,8 @@ public class ProducerConfig {
     public ProducerFactory<String, Object> producerFactory(final KafkaProperties kafkaProperties) {
 
         Map<String, Object> props = kafkaProperties.buildProducerProperties(null);
+
+        props.put(org.apache.kafka.clients.producer.ProducerConfig.PARTITIONER_CLASS_CONFIG, RoundRobinPartitioner.class.getName());
 
         for (KafkaPropertiesConfigurator configurator : configurators) {
             configurator.configure(props);

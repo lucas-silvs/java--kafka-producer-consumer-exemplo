@@ -1,8 +1,5 @@
 spring:
   kafka:
-    nome-topico: topico--teste
-
-
     properties:
       basic:
         auth:

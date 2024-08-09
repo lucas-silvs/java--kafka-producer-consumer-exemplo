@@ -1,6 +1,7 @@
-package com.lucassilvs.kafkaproducerexemplo.gateways;
+package com.lucassilvs.kafkaproducerexemplo.datasources;
 
 
+import com.lucassilvs.kafkaproducerexemplo.repositories.EventRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -11,19 +12,19 @@ import java.util.concurrent.CompletableFuture;
 
 
 @Component
-public class KafkaPostUtils {
+public class KafkaDataSourceImpl implements EventRepository {
 
-    private final Logger logger = LoggerFactory.getLogger(KafkaPostUtils.class);
+    private final Logger logger = LoggerFactory.getLogger(KafkaDataSourceImpl.class);
 
     private final KafkaTemplate<String,Object> kafkaTemplate;
 
-    public KafkaPostUtils(KafkaTemplate<String, Object> kafkaTemplate) {
+    public KafkaDataSourceImpl(KafkaTemplate<String, Object> kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;
     }
 
-    public void postarMensagem(Object mensagem, String nomeTopico){
-        logger.info("Postando mensagem: {} no tópico {}", mensagem, nomeTopico);
-        CompletableFuture<SendResult<String, Object>> sendStatus = kafkaTemplate.send(nomeTopico, mensagem);
+    public void sendEvent(Object event, String destination){
+        logger.info("Postando mensagem: {} no tópico {}", event, destination);
+        CompletableFuture<SendResult<String, Object>> sendStatus = kafkaTemplate.send(destination, event);
 
         sendStatus.whenComplete((result, exception) -> {
             if (exception != null) {

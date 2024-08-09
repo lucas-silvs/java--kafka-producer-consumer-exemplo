@@ -1,7 +1,9 @@
-
-
 management:
   server:
     port: 9091
 server:
   port: 5001
+
+spring:
+  kafka:
+    bootstrap-servers: localhost:9093
