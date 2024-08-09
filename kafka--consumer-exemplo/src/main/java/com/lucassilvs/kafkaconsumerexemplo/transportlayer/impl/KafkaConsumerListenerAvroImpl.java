@@ -1,7 +1,7 @@
 package com.lucassilvs.kafkaconsumerexemplo.transportlayer.impl;
 
 import com.lucassilvs.kafkaconsumerexemplo.transportlayer.KafkaConsumerListener;
-import com.lucassilvs.kafkaproducerexemplo.gateways.kafka.UsuarioTesteAvro;
+import com.lucassilvs.kafkaproducerexemplo.datasources.kafka.UsuarioTesteAvro;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,6 +1,6 @@
 {
   "name": "UsuarioTesteAvro",
-  "namespace": "com.lucassilvs.kafkaproducerexemplo.gateways.kafka",
+  "namespace": "com.lucassilvs.kafkaproducerexemplo.datasources.kafka",
   "type": "record",
   "doc": "Sample schema to help you get started.",
   "fields": [

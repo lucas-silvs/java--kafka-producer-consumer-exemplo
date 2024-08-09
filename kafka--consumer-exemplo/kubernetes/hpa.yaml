@@ -1,34 +1,68 @@
 apiVersion: keda.sh/v1alpha1
 kind: ScaledObject
 metadata:
-  name: kafka-keda-consumer-trigger
-  namespace: consumer
+  name: kafka-keda-consumer-trigger  # Nome do ScaledObject
+  namespace: consumer  # Namespace onde o ScaledObject e os pods estão localizados
+
 spec:
-  minReplicaCount: 2 # Defina aqui o número mínimo de réplicas desejado
-  maxReplicaCount: 6 # Defina aqui o número máximo de réplicas desejado
+  # minReplicaCount: 2  # Número mínimo de réplicas, garantindo que sempre haverá pelo menos 2 réplicas rodando
+  maxReplicaCount: 40  # Número máximo de réplicas permitidas, limitando a escala para evitar consumo excessivo de recursos
 
   scaleTargetRef:
-    name: consumer-deployment
-  pollingInterval: 3
+    name: consumer-deployment  # Nome do Deployment alvo que será escalado pelo KEDA
+  pollingInterval: 3  # Intervalo em segundos que o KEDA verifica as métricas para decidir se escala ou não (a cada 3 segundos)
+  cooldownPeriod: 30  # Período de cooldown em segundos após o último trigger ativo antes de começar a escala para baixo (a cada 20 segundos)
+
+  advanced:
+    horizontalPodAutoscalerConfig:
+      behavior:
+        scaleDown:
+          stabilizationWindowSeconds: 30  # Tempo que o HPA/KEDA esperará antes de escalar para baixo após um trigger de scale down
+          policies:
+            - type: Percent
+              value: 25  # Percentual de redução por intervalo de tempo (25% a cada período especificado)
+              periodSeconds: 15  # Intervalo de tempo em segundos para aplicar a política de scale down
+            - type: Pods
+              value: 5  # Redução fixa em número de pods (5 pods a cada período especificado)
+              periodSeconds: 60  # Intervalo de tempo em segundos para aplicar a política de redução de 5 pods
+          selectPolicy: Max  # Política selecionada para scale down será a que provoca a maior redução (Max)
+
+        scaleUp:
+          stabilizationWindowSeconds: 100  # Tempo que o HPA/KEDA esperará antes de escalar para cima após um trigger de scale up (300 segundos)
+          policies:
+            - type: Percent
+              value: 25  # Percentual de aumento por intervalo de tempo (25% a cada período especificado)
+              periodSeconds: 15  # Intervalo de tempo em segundos para aplicar a política de scale up
+            - type: Pods
+              value: 3 # Percentual de aumento por intervalo de tempo (25% a cada período especificado)
+              periodSeconds: 15  # Intervalo de tempo em segundos para aplicar a política de scale up
+          selectPolicy: Max  # Política selecionada para scale up será a que provoca o maior aumento (Max)
+
   triggers:
-    #  Configuração para configuração de trigger utilizando lag de consumer Kafka
+    # Configuração para trigger utilizando lag de consumer Kafka
     - type: kafka
       metadata:
-        bootstrapServers: broker.kafka.svc.cluster.local:9093
-        consumerGroup: consumer-teste # Consumer group que será monitorado
-        topic: topico-teste-avro # Tópico que será monitorado
-        lagThreshold: "3" # Limite de lag para iniciar a escala
-        offsetResetPolicy: latest # Política de reset de offset
-        sasl: plaintext # Configuração de autenticação
+        bootstrapServers: broker.kafka.svc.cluster.local:9093  # Endereço do Kafka broker
+        consumerGroup: consumer-teste  # Consumer group que será monitorado para lag
+        topic: topico-teste-avro  # Tópico do Kafka que será monitorado para lag
+        lagThreshold: "3"  # Limite de lag que dispara a escala para cima (se o lag do consumer group passar de 3)
+        offsetResetPolicy: earliest  # Política de reset de offset, configurada para "latest" para processar as mensagens mais recentes
+        sasl: plaintext  # Configuração de autenticação, aqui definida como "plaintext"
 
-      # Configuração para utilizar objeto de autenticação do tipo ClusterTriggerAuthentication (que contem valor do AWS Secret Manager)
-      # Esse artefato disponibiliza os campos "username" e "password" para autenticação
+      # Configuração para autenticação usando ClusterTriggerAuthentication
       authenticationRef:
-        name: kafka-trigger-auth-aws-secret-manager
-        kind: ClusterTriggerAuthentication
+        name: kafka-trigger-auth-aws-secret-manager  # Nome do objeto de ClusterTriggerAuthentication para fornecer as credenciais de autenticação
+        kind: ClusterTriggerAuthentication  # Tipo do objeto de autenticação, neste caso, ClusterTriggerAuthentication
 
-    #  Configuração para configuração de trigger utilizando porcentagem de utilização do CPU
-    - type: cpu
-      metricType: Utilization
-      metadata:
-        value: "60" #valor é calculado em porcentagem
+    # Configuração comentada para trigger baseado na utilização de CPU
+#    - type: cpu
+#      metricType: Utilization
+#      metadata:
+#        value: "60"  # Porcentagem de utilização de CPU que dispararia a escala (60% de utilização)
+
+    # Configuração comentada para trigger baseado na utilização de memória
+#    - type: memory
+#      metricType: Utilization
+#      metadata:
+#        value: "60"  # Porcentagem de utilização de memória que dispararia a escala (60% de utilização)
+
