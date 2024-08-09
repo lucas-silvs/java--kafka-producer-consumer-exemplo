@@ -47,6 +47,10 @@ spec:
               value: http://schema-registry-service.kafka.svc.cluster.local:8081
             - name: PORT
               value: "9021"
+            - name: CONTROL_CENTER_STREAM_SASL_JAAS_CONFIG
+              value: org.apache.kafka.common.security.plain.PlainLoginModule required username="admin" password="admin-secret";
+            - name: CONTROL_CENTER_STREAM_SECURITY_PROTOCOL
+              value: SASL_PLAINTEXT
           image: confluentinc/cp-enterprise-control-center:7.5.0
           name: control-center
           ports:
@@ -57,3 +61,25 @@ spec:
       hostname: control-center
       restartPolicy: Always
 status: {}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: kafka
+  name: kafka-credentials-control-center
+data:
+  kafka_client_jaas.conf: |
+    KafkaServer {
+      org.apache.kafka.common.security.plain.PlainLoginModule required
+      username="admin"
+      password="admin-secret"
+      user_admin="admin-secret"
+      user_consumer="sample-password"
+      user_producer="sample-password"
+      user_lucas="lucas-secret";
+    };
+    Client {
+      org.apache.kafka.common.security.plain.PlainLoginModule required
+      username="admin"
+      password="admin-secret";
+    };
