@@ -1,9 +1,35 @@
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath 'com.google.protobuf:protobuf-gradle-plugin:0.9.4'
+		classpath 'com.github.davidmc24.gradle.plugin:gradle-avro-plugin:1.9.1'
+	}
+}
 plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.3.1'
 	id 'io.spring.dependency-management' version '1.1.5'
-	id "com.github.davidmc24.gradle.plugin.avro" version "1.9.1"
-//	id "com.google.protobuf" version "0.9.4"
+}
+//validar se existe arquivos .proto
+def protoDir = file("${projectDir}/src/main/proto")
+
+if (protoDir.exists() && protoDir.listFiles().any { it.name.endsWith('.proto') }) {
+	apply plugin: 'com.google.protobuf'
+
+} else {
+	logger.warn("Diretório de arquivos .proto não encontrado ou vazio. Ignorando compilação do protobuf.")
+}
+
+//validar se existe arquivos .avsc
+def avroDir = file("${projectDir}/src/main/avro")
+
+if (avroDir.exists() && avroDir.listFiles().any { it.name.endsWith('.avsc') }) {
+	apply plugin: 'com.github.davidmc24.gradle.plugin.avro'
+
+} else {
+	logger.warn("Diretório de arquivos .avsc não encontrado ou vazio. Ignorando compilação do avro.")
 }
 
 group = 'com.lucassilvs'
