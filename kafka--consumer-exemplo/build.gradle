@@ -11,6 +11,12 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.3.1'
 	id 'io.spring.dependency-management' version '1.1.5'
+	id 'org.graalvm.buildtools.native' version '0.9.17'
+}
+
+// Configuração do plugin nativo do GraalVM
+graalvmNative {
+	testSupport = false // Desabilita a geração de suporte para testes pois o mockito não é compatível com o GraalVM
 }
 
 //validar se existe arquivos .proto
