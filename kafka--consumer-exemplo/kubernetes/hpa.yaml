@@ -3,6 +3,8 @@ kind: ScaledObject
 metadata:
   name: kafka-keda-consumer-trigger  # Nome do ScaledObject
   namespace: consumer  # Namespace onde o ScaledObject e os pods estão localizados
+  annotations:
+    scaledobject.keda.sh/transfer-hpa-ownership: "true"  # Anotação para transferir a propriedade do HPA para o KEDA
 
 spec:
   # minReplicaCount: 2  # Número mínimo de réplicas, garantindo que sempre haverá pelo menos 2 réplicas rodando
@@ -15,6 +17,7 @@ spec:
 
   advanced:
     horizontalPodAutoscalerConfig:
+      name: consumer-hpa  # Nome do HPA que será transferido o ownership para o KEDA
       behavior:
         scaleDown:
           stabilizationWindowSeconds: 30  # Tempo que o HPA/KEDA esperará antes de escalar para baixo após um trigger de scale down
@@ -65,4 +68,27 @@ spec:
 #      metricType: Utilization
 #      metadata:
 #        value: "60"  # Porcentagem de utilização de memória que dispararia a escala (60% de utilização)
+
+
+#apiVersion: autoscaling/v2
+#kind: HorizontalPodAutoscaler
+#metadata:
+#  name: consumer-hpa
+#  namespace: consumer
+#  labels:
+#    app: consumer
+#spec:
+#  scaleTargetRef:
+#    apiVersion: apps/v1
+#    kind: Deployment
+#    name: consumer-deployment
+#  minReplicas: 1
+#  maxReplicas: 3
+#  metrics:
+#    - type: Resource
+#      resource:
+#        name: cpu
+#        target:
+#          type: Utilization
+#          averageUtilization: 50
 
